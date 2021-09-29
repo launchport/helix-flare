@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "lib": ["esnext", "webworker", "dom.iterable"],
+    "target": "es2020",
+    "module": "commonjs"
+  },
+  "include": ["./src/**/*.ts"],
+  "exclude": ["node_modules/", "dist/"]
+}
