@@ -91,6 +91,47 @@ const access = ({
   }
 }
 
+async function writeToStream(
+  writer: WritableStreamDefaultWriter,
+  payload:
+    | {
+        id?: string
+        data?: string
+        event?: string
+      }
+    | string,
+) {
+  const encoder = new TextEncoder()
+  if (typeof payload === 'string') {
+    await writer.write(encoder.encode(payload))
+  } else {
+    const { event, id, data } = payload
+    if (event) {
+      await writer.write(encoder.encode('event: ' + event + '\n'))
+    }
+    if (id) {
+      await writer.write(encoder.encode('id: ' + id + '\n'))
+    }
+    if (data) {
+      await writer.write(encoder.encode('data: ' + data + '\n'))
+    }
+    await writer.write(encoder.encode('\n'))
+  }
+}
+
+const createHelixRequest = async (request: Request) => {
+  const url = new URL(request.url)
+  const searchParams = new URLSearchParams(url.search)
+  const body = await request.text()
+
+  return {
+    body: body ? JSON.parse(body) : undefined,
+    headers: request.headers,
+    method: request.method,
+    query: Object.fromEntries(searchParams),
+  }
+}
+
 export default async <TContext>(
   request: Request,
   schema: GraphQLSchema,
@@ -111,16 +152,7 @@ export default async <TContext>(
     })
   }
 
-  const url = new URL(request.url)
-  const searchParams = new URLSearchParams(url.search)
-  const body = await request.text()
-
-  const helixRequest = {
-    body: body ? JSON.parse(body) : undefined,
-    headers: request.headers,
-    method: request.method,
-    query: Object.fromEntries(searchParams),
-  }
+  const helixRequest = await createHelixRequest(request)
 
   if (shouldRenderGraphiQL(helixRequest)) {
     return new Response(renderGraphiQL(), {
@@ -146,7 +178,7 @@ export default async <TContext>(
         status: result.status,
         headers: {
           ...Object.fromEntries(
-            result.headers.map(({ name, value }) => [name, value]),
+            result.headers.map(({ name, value }: any) => [name, value]),
           ),
           'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json; charset=utf-8',
@@ -156,8 +188,38 @@ export default async <TContext>(
       return new Response('@stream/@defer directives are not supported', {
         status: 405,
       })
+    } else if (result.type === 'PUSH') {
+      const { readable, writable } = new TransformStream()
+      const stream = writable.getWriter()
+
+      setInterval(() => {
+        writeToStream(stream, ':\n\n')
+      }, 5000)
+
+      result
+        .subscribe((data: unknown) => {
+          writeToStream(stream, {
+            event: 'next',
+            data: JSON.stringify(data),
+          })
+        })
+        .then(() => {
+          writeToStream(stream, 'event: complete\n\n')
+        })
+
+      return new Response(readable, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          Connection: 'keep-alive',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers':
+            'Origin, X-Requested-With, Content-Type, Accept',
+        },
+      })
     } else {
-      return new Response('Subscription are not supported', { status: 405 })
+      return new Response('not supported', { status: 405 })
     }
   }
 }
