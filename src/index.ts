@@ -61,8 +61,6 @@ const access = ({
     if (credentials) {
       responseHeaders.set('Access-Control-Allow-Credentials', 'true')
     }
-    // if (opts.expose.length)
-    //   response.setHeader('Access-Control-Expose-Headers', opts.expose)
 
     if (isPreflight) {
       responseHeaders.set(
@@ -137,18 +135,19 @@ export default async <TContext>(
   schema: GraphQLSchema,
   { middlewares = [], allowedOrigins, contextFactory }: Options<TContext> = {},
 ) => {
-  const cors = access({ origins: allowedOrigins })
+  const cors = access({ origins: allowedOrigins, maxAge: 7200 })
   const { isPreflight, headers } = cors(request)
 
   if (isPreflight) {
     return new Response('', {
       status: 200,
-      headers: {
-        'Access-Control-Allow-Headers':
-          'Authorization, Content-Type, Cache-Control',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Max-Age': '7200',
-      },
+      headers: headers,
+      // {
+      //   'Access-Control-Allow-Headers':
+      //     'Authorization, Content-Type, Cache-Control',
+      //   'Access-Control-Allow-Origin': '*',
+      //   'Access-Control-Max-Age': '7200',
+      // },
     })
   }
 
