@@ -15,6 +15,10 @@ helix-flare helps you build GraphQL services on Cloudflare Workers® using graph
 
 `createExecutor(request: Request, selectDurableObject: (args: Record<string, any | undefined>, context: undefined | TContext)` allows you to select your durable object in the worker, before forwarding the graphql request to it. You have access the graphql variables, parameters and the query or mutation the user is doing.
 
+<details>
+
+<summary>Show full example</summary>
+
 ```ts
 // worker.ts
 import { makeExecutableSchema } from '@graphql-tools/schema'
@@ -51,9 +55,15 @@ export default {
 }
 ```
 
+</details>
+
 ### Subscriptions with SSE
 
 Subscriptions work out of the box with [SSE](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events). They can be done in worker but will be used in durable objects most of the time.
+
+<details>
+
+<summary>Show full example</summary>
 
 ```ts
 // typedefs.ts
@@ -148,5 +158,7 @@ export class Post implements DurableObject {
   }
 }
 ```
+
+</details>
 
 ### Combine multiple worker to one endpoint (stichting)
