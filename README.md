@@ -13,7 +13,7 @@ helix-flare helps you build GraphQL services on Cloudflare Workers® using graph
 
 ### Delegate execution to Durable Objects
 
-`createExecutor()` allows you to select your durable object in the worker, before forwarding the graphql request to it. You have access the graphql variables, parameters and the query or mutation the user is doing.
+`createExecutor(request: Request, selectDurableObject: (args: Record<string, any | undefined>, context: undefined | TContext)` allows you to select your durable object in the worker, before forwarding the graphql request to it. You have access the graphql variables, parameters and the query or mutation the user is doing.
 
 ```ts
 // worker.ts
@@ -41,7 +41,7 @@ export default {
           throw new Error('No postId argument found')
         }
 
-        const doId = env.PostDurableObject.idFromString(args.liveId)
+        const doId = env.PostDurableObject.idFromString(args.postId)
         return env.PostDurableObject.get(doId)
       }),
     })
@@ -95,7 +95,7 @@ export default {
           throw new Error('No postId argument found')
         }
 
-        const doId = env.PostDurableObject.idFromString(args.liveId)
+        const doId = env.PostDurableObject.idFromString(args.postId)
         return env.PostDurableObject.get(doId)
       }),
     })
