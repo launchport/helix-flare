@@ -1,19 +1,19 @@
 # helix-flare
 
-helix-flare helps you build graphql services on cloudflare workers using graphql-helix.
+helix-flare helps you build GraphQL services on Cloudflare Workers® using graphql-helix.
 
-You can:
+**Features:**
 
 - Add middlewares to your graphql service
 - Delegate execution to Durable Objects
 - Subscriptions with SSE
 - Combine multiple worker to one endpoint
 
-## Examples
+## Usage
 
 ### Delegate execution to Durable Objects
 
-The `createExecutor()` function allows you to select your durable object in the worker, before forwarding the graphql request to it. You have access the graphql variables, parameters and the query or mutation the user is doing.
+`createExecutor()` allows you to select your durable object in the worker, before forwarding the graphql request to it. You have access the graphql variables, parameters and the query or mutation the user is doing.
 
 ```ts
 // worker.ts
@@ -53,10 +53,10 @@ export default {
 
 ### Subscriptions with SSE
 
-The `createExecutor()` function allows you to select your durable object in the worker, before forwarding the graphql request to it. You have access the graphql variables, parameters and the query or mutation the user is doing.
+Subscriptions work out of the box with [SSE](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events). They can be done in worker but will be used in durable objects most of the time.
 
 ```ts
-// typedef.ts
+// typedefs.ts
 const typeDefs = /* GraphQL */ `
   type Post {
     id: Int!
