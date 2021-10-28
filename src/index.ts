@@ -4,10 +4,10 @@ import {
   renderGraphiQL,
   shouldRenderGraphiQL,
 } from 'graphql-helix'
+import { applyMiddleware } from 'graphql-middleware'
 import type { GraphQLSchema } from 'graphql'
 import type { ExecutionContext } from 'graphql-helix'
 import type { IMiddleware } from 'graphql-middleware'
-import { applyMiddleware } from 'graphql-middleware'
 
 import { access } from './access'
 import { writeToStream } from './writeToStream'

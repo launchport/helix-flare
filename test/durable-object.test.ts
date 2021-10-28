@@ -20,11 +20,18 @@ it('should do something', async () => {
     return (await res.json()).data
   }
 
-  let result = await query(`query { status }`)
-  expect(result.status).toBe('stopped')
+  let res = await query(/* GraphQL */ `
+    mutation {
+      start
+    }
+  `)
 
-  await query(`mutation { start }`)
+  const doId = res.start
 
-  result = await query(`query { status }`)
-  expect(result.status).toBe('started')
+  res = await query(/* GraphQL */ `
+    query {
+      status(id: "${doId}")
+    }
+  `)
+  expect(res.status).toBe('started')
 })

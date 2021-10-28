@@ -1,33 +1,20 @@
-import {
-  getArgumentValues,
-  observableToAsyncIterable,
-} from '@graphql-tools/utils'
-import { getNullableType, print } from 'graphql'
-import type { Executor } from '@graphql-tools/utils'
-import type { GraphQLObjectType, GraphQLResolveInfo } from 'graphql'
+import { observableToAsyncIterable } from '@graphql-tools/utils'
+import { print } from 'graphql'
+import type { AsyncExecutor } from '@graphql-tools/utils'
 
 import { fetchEventSource } from './fetchEventSource'
+import getArguments from './getArguments'
 
-const getType = (type: any): GraphQLObjectType => {
-  const actualType = getNullableType(type)
-  return actualType.ofType ? getType(actualType.ofType) : type
-}
-
-const getArguments = (info: GraphQLResolveInfo) => {
-  const name = info.fieldName
-  const fieldDef = getType(info.parentType).getFields()[name]
-  const node = info.fieldNodes[0]
-
-  return getArgumentValues(fieldDef, node, info.variableValues)
-}
-
-export function createExecutor<TContext extends Record<string, any>>(
+export function createExecutor<
+  TContext extends Record<string, any>,
+  TArgs extends Record<string, any> = Record<string, any>,
+>(
   request: Request,
   selectDurableObject: (
-    args: Record<string, any | undefined>,
+    args: TArgs,
     context: TContext | undefined,
   ) => Promise<DurableObjectStub>,
-): Executor<TContext> {
+): AsyncExecutor<TContext> {
   return async ({ variables, document, info, context }) => {
     if (!info) {
       throw new Error('No query info available.')
@@ -35,7 +22,7 @@ export function createExecutor<TContext extends Record<string, any>>(
 
     const query = print(document)
 
-    const args = getArguments(info)
+    const args = getArguments<TArgs>(info)
     const durableObject = await selectDurableObject(args, context)
 
     if (request.headers.get('accept') === 'text/event-stream') {

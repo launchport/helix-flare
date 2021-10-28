@@ -3,38 +3,46 @@ import { wrapSchema } from '@graphql-tools/wrap'
 
 import helixFlare from '../src'
 import { createExecutor } from '../src/createExecutor'
-import { buildSchema } from 'graphql'
+
+const typeDefs = /* GraphQL */ `
+  type Mutation {
+    start: String!
+  }
+
+  type Query {
+    status(id: String!): String!
+  }
+`
 
 const Worker: ExportedHandler<{ HELIX_OBJECT: any }> = {
   async fetch(request, env) {
-    const schema = wrapSchema({
-      schema: buildSchema(typeDefs),
-      executor: createExecutor(request, async (args) => {
-        const doId = args.liveId
-          ? env.HELIX_OBJECT.idFromString(args.liveId)
+    const executor = createExecutor<any, { id?: string }>(
+      request,
+      async (args) => {
+        const doId = args.id
+          ? env.HELIX_OBJECT.idFromString(args.id)
           : env.HELIX_OBJECT.idFromName('someRandomId')
 
         return env.HELIX_OBJECT.get(doId)
-      }),
+      },
+    )
+
+    const schema = wrapSchema({
+      schema: makeExecutableSchema({ typeDefs }),
+      executor,
     })
 
     return helixFlare(request, schema)
   },
 }
 
-const typeDefs = /* GraphQL */ `
-  type Mutation {
-    start: Boolean!
-    stop: Boolean!
-  }
-
-  type Query {
-    status: String!
-  }
-`
-
 export class HelixObject {
-  status: 'started' | 'stopped' | 'paused' = 'stopped'
+  private state: DurableObjectState
+  private status: 'started' | 'stopped' | 'paused' = 'stopped'
+
+  constructor(state: DurableObjectState) {
+    this.state = state
+  }
 
   async fetch(request: Request) {
     const schema = makeExecutableSchema({
@@ -43,11 +51,7 @@ export class HelixObject {
         Mutation: {
           start: () => {
             this.status = 'started'
-            return true
-          },
-          stop: () => {
-            this.status = 'stopped'
-            return true
+            return this.state.id.toString()
           },
         },
         Query: {
