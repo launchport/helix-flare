@@ -1,4 +1,4 @@
-/** 
+/**
   This file was taken from https://github.com/Azure/fetch-event-source/tree/main/src
   and got modified for this project
 
@@ -42,11 +42,11 @@ export interface EventSourceMessage {
  * Converts a ReadableStream into a callback pattern.
  */
 export async function getBytes(
-  stream: ReadableStream<Uint8Array>,
+  stream: ReadableStream,
   onChunk: (arr: Uint8Array) => void,
 ) {
   const reader = stream.getReader()
-  let result: ReadableStreamDefaultReadResult<Uint8Array>
+  let result: ReadableStreamReaderReadResult
   while (!(result = await reader.read()).done) {
     onChunk(result.value)
   }
@@ -60,7 +60,7 @@ const enum ControlChars {
 }
 
 /**
- * Parses arbitary byte chunks into EventSource line buffers.
+ * Parses arbitrary byte chunks into EventSource line buffers.
  * Each line should be of the format "field: value" and ends with \r, \n, or \r\n.
  * @param onLine A function that will be called on each new EventSource line.
  * @returns A function that should be called for each incoming byte chunk.

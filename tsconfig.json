@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "moduleResolution": "node",
-    "lib": ["esnext", "webworker", "dom.iterable"],
+    "lib": ["esnext"],
     "esModuleInterop": true,
     "target": "es2020",
+    "skipLibCheck": true,
     "module": "commonjs",
     "types": ["@cloudflare/workers-types"]
   },

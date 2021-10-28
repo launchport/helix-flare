@@ -7,7 +7,7 @@ type Payload =
   | string
 
 export const writeToStream = async (
-  writer: WritableStreamDefaultWriter,
+  writer: WritableStreamWriter,
   payload: Payload,
 ) => {
   const encoder = new TextEncoder()

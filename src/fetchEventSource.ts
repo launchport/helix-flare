@@ -1,4 +1,4 @@
-/** 
+/**
   This file was taken from https://github.com/Azure/fetch-event-source/tree/main/src
   and got modified for this project
 
@@ -29,7 +29,8 @@ export const EventStreamContentType = 'text/event-stream'
 const DefaultRetryInterval = 1000
 const LastEventId = 'last-event-id'
 
-export interface FetchEventSourceInit extends RequestInit {
+// might want to revert to standard types: https://github.com/cloudflare/workers-types/issues/116
+export interface FetchEventSourceInit extends RequestInitializerDict {
   headers?: Record<string, string>
   onMessage?: (ev: EventSourceMessage) => void
   onClose?: () => void
@@ -38,7 +39,7 @@ export interface FetchEventSourceInit extends RequestInit {
 }
 
 export function fetchEventSource(
-  input: RequestInfo,
+  input: Request | string,
   {
     signal: inputSignal,
     headers: inputHeaders,
