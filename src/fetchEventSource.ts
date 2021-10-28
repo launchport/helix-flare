@@ -22,7 +22,8 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE
 **/
-import { EventSourceMessage, getBytes, getLines, getMessages } from './parseSSE'
+import { getBytes, getLines, getMessages } from './parseSSE'
+import type { EventSourceMessage } from './parseSSE'
 
 export const EventStreamContentType = 'text/event-stream'
 

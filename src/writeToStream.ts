@@ -1,10 +1,9 @@
-type Payload =
-  | {
-      id?: string
-      data?: string
-      event?: string
-    }
-  | string
+type Event = {
+  id?: string
+  data?: string
+  event?: string
+}
+type Payload = Event | string
 
 export const writeToStream = async (
   writer: WritableStreamWriter,

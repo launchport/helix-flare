@@ -1,5 +1,6 @@
-import { getNullableType, GraphQLObjectType, GraphQLResolveInfo } from 'graphql'
+import { getNullableType } from 'graphql'
 import { getArgumentValues } from '@graphql-tools/utils'
+import type { GraphQLObjectType, GraphQLResolveInfo } from 'graphql'
 
 const getType = (type: any): GraphQLObjectType => {
   const actualType = getNullableType(type)
