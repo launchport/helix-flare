@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "moduleResolution": "node",
-    "lib": ["esnext"],
+    "lib": ["esnext", "webworker"],
     "esModuleInterop": true,
     "target": "es2020",
     "skipLibCheck": true,
-    "module": "commonjs",
-    "types": ["@cloudflare/workers-types"]
+    "module": "esnext",
+    "types": ["@cloudflare/workers-types", "jest"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist/"]

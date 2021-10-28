@@ -22,7 +22,7 @@ type Options<TContext> = {
   ) => Promise<TContext> | TContext
 }
 
-export default async <TContext>(
+const helixFlare = async <TContext>(
   request: Request,
   schema: GraphQLSchema,
   { middlewares = [], allowedOrigins, contextFactory }: Options<TContext> = {},
@@ -115,3 +115,5 @@ export default async <TContext>(
     }
   }
 }
+
+export default helixFlare
