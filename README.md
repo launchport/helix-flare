@@ -137,7 +137,7 @@ export class Post implements DurableObject {
           // increase likes by one
           this.likes.next(this.likes.value() + 1)
           return {
-            likes: this.likes.value()
+            likes: this.likes.value(),
             id: this.state.id,
           }
         },
@@ -161,4 +161,4 @@ export class Post implements DurableObject {
 
 </details>
 
-### Combine multiple worker to one endpoint (stichting)
+### Combine multiple worker to one endpoint (stitching)
