@@ -4,6 +4,6 @@ export const tsup: Options = {
   dts: true,
   clean: true,
   format: ['esm'],
-  entryPoints: ['src/*.ts'],
-  external: [/graphql/],
+  minify: true,
+  entryPoints: ['src/index.ts'],
 }
