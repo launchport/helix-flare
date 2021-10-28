@@ -65,7 +65,7 @@ export function fetchEventSource(
       requestController.abort()
     }
 
-    inputSignal?.addEventListener('abort', () => {
+    ;(inputSignal as any)?.addEventListener('abort', () => {
       dispose()
       resolve()
     })

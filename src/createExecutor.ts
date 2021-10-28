@@ -25,7 +25,7 @@ export function createExecutor<TContext extends Record<string, any>>(
   request: Request,
   selectDurableObject: (
     args: Record<string, any | undefined>,
-    context: TContext,
+    context: TContext | undefined,
   ) => Promise<DurableObjectStub>,
 ): Executor<TContext> {
   return async ({ variables, document, info, context }) => {
@@ -70,13 +70,13 @@ export function createExecutor<TContext extends Record<string, any>>(
         },
       })
     } else {
-      return new Promise(async (res) => {
+      return new Promise(async (resolve) => {
         const result = await durableObject.fetch(request.url, {
           method: request.method,
           headers: Object.fromEntries(request.headers.entries()),
           body: JSON.stringify({ query, variables }),
         })
-        res(result.json())
+        resolve(result.json())
       })
     }
   }

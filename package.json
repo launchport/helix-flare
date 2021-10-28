@@ -19,7 +19,7 @@
     "trailingComma": "all"
   },
   "dependencies": {
-    "graphql": "15.7.1",
+    "graphql": "15.7.2",
     "graphql-helix": "1.8.4",
     "graphql-middleware": "6.1.11"
   },
