@@ -1,6 +1,6 @@
 # helix-flare
 
-helix-flare helps you build GraphQL services on Cloudflare Workers® using graphql-helix.
+`helix-flare` helps you build GraphQL services on [Cloudflare Workers®](https://workers.cloudflare.com/) using [`graphql-helix`](https://github.com/contrawork/graphql-helix).
 
 **Features:**
 
