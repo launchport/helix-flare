@@ -1,4 +1,4 @@
-import { buildWorkers, createMiniflare } from './utils'
+import { buildWorkers, createWorker } from './utils'
 
 beforeAll(() => {
   buildWorkers()
@@ -6,14 +6,14 @@ beforeAll(() => {
 
 describe('helix-flare', () => {
   it('should resolve a simple query', async () => {
-    const mf = createMiniflare('./index.worker.ts')
+    const worker = createWorker('./index.worker.ts')
     const query = /* GraphQL */ `
       query {
         user
       }
     `
 
-    const res = await mf.dispatchFetch('file:', {
+    const res = await worker.dispatchFetch('file:', {
       method: 'POST',
       body: JSON.stringify({ query }),
     })
@@ -26,8 +26,8 @@ describe('helix-flare', () => {
   })
 
   it('should render GraphiQL', async () => {
-    const mf = createMiniflare('./index.worker.ts')
-    const res = await mf.dispatchFetch('file:', {
+    const worker = createWorker('./index.worker.ts')
+    const res = await worker.dispatchFetch('file:', {
       method: 'GET',
       headers: { Accept: 'text/html' },
     })

@@ -1,18 +1,18 @@
-import { buildWorkers, createMiniflare } from './utils'
+import { buildWorkers, createWorker } from './utils'
 
 beforeAll(() => {
   buildWorkers()
 })
 
 it('should do something', async () => {
-  const mf = createMiniflare('./durable-object.worker.ts', {
+  const worker = createWorker('./durable-object.worker.ts', {
     durableObjects: {
       HELIX_OBJECT: 'HelixObject',
     },
   })
 
   const query = async (query: string) => {
-    const res = await mf.dispatchFetch('file:', {
+    const res = await worker.dispatchFetch('file:', {
       method: 'POST',
       body: JSON.stringify({ query }),
     })

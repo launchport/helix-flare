@@ -18,6 +18,7 @@ export const buildWorkers = () => {
     '--log-level=error',
     '--platform=node',
     '--format=esm',
+    '--sourcemap',
     '--target=node16',
     `--define:setImmediate=setTimeout`,
     `--define:process.env.NODE_ENV='"production"'`,
@@ -26,10 +27,7 @@ export const buildWorkers = () => {
   execSync(buildCommand)
 }
 
-export const createMiniflare = (
-  relativeWorkerPath: string,
-  options?: Options,
-) => {
+export const createWorker = (relativeWorkerPath: string, options?: Options) => {
   const scriptPath = path.resolve(
     __dirname,
     'dist',
@@ -40,6 +38,7 @@ export const createMiniflare = (
     scriptPath,
     modules: true,
     buildCommand: undefined,
+    sourceMap: true,
     ...options,
   })
 }
