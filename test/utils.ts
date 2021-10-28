@@ -1,23 +1,18 @@
 import path from 'node:path'
 import url from 'node:url'
+import fs from 'node:fs'
+import { execSync } from 'node:child_process'
 
 import { Miniflare } from 'miniflare'
 
 const __filename = url.fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-export const createMiniflare = (relativeWorkerPath: string) => {
-  const inputFile = path.resolve(__dirname, relativeWorkerPath)
-  const scriptPath = path.resolve(
-    __dirname,
-    'dist',
-    relativeWorkerPath.replace(/\.ts$/, '.js'),
-  )
-
+export const buildWorkers = () => {
   const buildCommand = [
     'yarn',
     'esbuild',
-    inputFile,
+    path.resolve(__dirname, '*.worker.ts'),
     `--outdir=${path.resolve(__dirname, 'dist')}`,
     '--bundle',
     '--log-level=error',
@@ -27,9 +22,23 @@ export const createMiniflare = (relativeWorkerPath: string) => {
     `--define:process.env.NODE_ENV='"production"'`,
   ].join(' ')
 
+  execSync(buildCommand)
+}
+
+export const cleanWorkers = () => {
+  fs.rmSync(path.resolve(__dirname, 'dist'), { recursive: true })
+}
+
+export const createMiniflare = (relativeWorkerPath: string) => {
+  const scriptPath = path.resolve(
+    __dirname,
+    'dist',
+    relativeWorkerPath.replace(/\.ts$/, '.js'),
+  )
+
   return new Miniflare({
     scriptPath,
     modules: true,
-    buildCommand,
+    buildCommand: undefined,
   })
 }
