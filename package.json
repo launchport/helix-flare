@@ -6,19 +6,11 @@
   "exports": {
     "./*": "./src/*.ts"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsup --dts"
-  },
-  "tsup": {
-    "splitting": false,
-    "clean": true,
-    "format": [
-      "esm",
-      "cjs"
-    ],
-    "entryPoints": [
-      "src/index.ts"
-    ]
+    "build": "tsup"
   },
   "prettier": {
     "singleQuote": true,
@@ -26,14 +18,15 @@
     "trailingComma": "all"
   },
   "dependencies": {
-    "graphql": "15.6.0",
-    "graphql-helix": "1.8.0",
-    "graphql-middleware": "6.1.6"
+    "graphql": "15.7.1",
+    "graphql-helix": "1.8.4",
+    "graphql-middleware": "6.1.11"
   },
   "devDependencies": {
-    "esbuild": "0.13.3",
+    "@cloudflare/workers-types": "3.0.0",
+    "esbuild": "0.13.10",
     "prettier": "2.4.1",
-    "tsup": "5.2.1",
-    "typescript": "4.4.3"
+    "tsup": "5.5.0",
+    "typescript": "4.4.4"
   }
 }

@@ -1,14 +1,11 @@
 import {
-  Executor,
   getArgumentValues,
   observableToAsyncIterable,
 } from '@graphql-tools/utils'
-import {
-  getNullableType,
-  GraphQLObjectType,
-  GraphQLResolveInfo,
-  print,
-} from 'graphql'
+import { getNullableType, print } from 'graphql'
+import type { Executor } from '@graphql-tools/utils'
+import type { GraphQLObjectType, GraphQLResolveInfo } from 'graphql'
+
 import { fetchEventSource } from './fetchEventSource'
 
 const getType = (type: any): GraphQLObjectType => {
@@ -24,13 +21,13 @@ const getArguments = (info: GraphQLResolveInfo) => {
   return getArgumentValues(fieldDef, node, info.variableValues)
 }
 
-export function createExecutor<TContext = Record<string, any>>(
+export function createExecutor<TContext extends Record<string, any>>(
   request: Request,
   selectDurableObject: (
     args: Record<string, any | undefined>,
-    context: undefined | TContext,
+    context: TContext,
   ) => Promise<DurableObjectStub>,
-): Executor {
+): Executor<TContext> {
   return async ({ variables, document, info, context }) => {
     if (!info) {
       throw new Error('No query info available.')
