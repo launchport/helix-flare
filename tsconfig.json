@@ -4,6 +4,7 @@
     "lib": ["esnext", "webworker"],
     "esModuleInterop": true,
     "target": "es2020",
+    "strict": true,
     "skipLibCheck": true,
     "module": "esnext",
     "types": ["@cloudflare/workers-types", "jest"]

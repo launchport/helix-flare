@@ -1,16 +1,12 @@
-import { buildWorkers, cleanWorkers, createMiniflare } from './utils'
+import { buildWorkers, createMiniflare } from './utils'
 
 beforeAll(() => {
   buildWorkers()
 })
 
-afterAll(() => {
-  cleanWorkers()
-})
-
 describe('helix-flare', () => {
   it('should resolve a simple query', async () => {
-    const mf = await createMiniflare('./index.worker.ts')
+    const mf = createMiniflare('./index.worker.ts')
     const query = /* GraphQL */ `
       query {
         user
@@ -30,7 +26,7 @@ describe('helix-flare', () => {
   })
 
   it('should render GraphiQL', async () => {
-    const mf = await createMiniflare('./index.worker.ts')
+    const mf = createMiniflare('./index.worker.ts')
     const res = await mf.dispatchFetch('file:', {
       method: 'GET',
       headers: { Accept: 'text/html' },
