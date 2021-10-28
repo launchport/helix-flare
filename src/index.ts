@@ -83,7 +83,7 @@ export default async <TContext>(
       const { readable, writable } = new TransformStream()
       const stream = writable.getWriter()
 
-      setInterval(() => {
+      const intervalId = setInterval(() => {
         writeToStream(stream, ':\n\n')
       }, 5000)
 
@@ -95,6 +95,7 @@ export default async <TContext>(
           })
         })
         .then(() => {
+          clearInterval(intervalId)
           writeToStream(stream, 'event: complete\n\n')
         })
 
