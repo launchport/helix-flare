@@ -1,6 +1,5 @@
 /**
-  This file was taken from https://github.com/Azure/fetch-event-source/tree/main/src
-  and got modified for this project
+  This file was taken from https://github.com/Azure/fetch-event-source and has been modified for `helix-flare`
 
   MIT License
   Copyright (c) Microsoft Corporation.

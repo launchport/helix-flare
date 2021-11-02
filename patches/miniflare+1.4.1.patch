@@ -1,0 +1,12 @@
+diff --git a/node_modules/miniflare/dist/modules/standards.js b/node_modules/miniflare/dist/modules/standards.js
+index e9431cd..1a76f4d 100644
+--- a/node_modules/miniflare/dist/modules/standards.js
++++ b/node_modules/miniflare/dist/modules/standards.js
+@@ -122,6 +122,7 @@ class StandardsModule extends module_1.Module {
+             // may be returned from Miniflare's realm (e.g. ArrayBuffer responses,
+             // Durable Object listed keys) so it makes sense to share these so
+             // instanceof behaves correctly.
++            AbortController,
+             ArrayBuffer,
+             Atomics,
+             BigInt64Array,

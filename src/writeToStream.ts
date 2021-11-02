@@ -1,7 +1,7 @@
 type Event = {
   id?: string
   data?: string
-  event?: string
+  event?: 'complete' | 'next'
 }
 type Payload = Event | string
 

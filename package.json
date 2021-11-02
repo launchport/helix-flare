@@ -11,7 +11,8 @@
   ],
   "scripts": {
     "build": "tsup",
-    "test": "NODE_OPTIONS=--experimental-vm-modules yarn jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules yarn jest",
+    "postinstall": "patch-package"
   },
   "prettier": {
     "singleQuote": true,
@@ -19,6 +20,7 @@
     "trailingComma": "all"
   },
   "dependencies": {
+    "event-iterator": "2.0.0",
     "graphql": "15.7.2",
     "graphql-helix": "1.8.4",
     "graphql-middleware": "6.1.11"
@@ -28,10 +30,13 @@
     "@graphql-tools/schema": "8.3.1",
     "@graphql-tools/wrap": "8.3.1",
     "@types/jest": "27.0.2",
-    "esbuild": "0.13.10",
+    "esbuild": "0.13.11",
+    "graphql-sse": "1.0.4",
     "jest": "27.3.1",
     "miniflare": "1.4.1",
+    "nanoevents": "6.0.2",
     "node-fetch": "3.0.0",
+    "patch-package": "6.4.7",
     "prettier": "2.4.1",
     "ts-jest": "27.0.7",
     "ts-node": "10.4.0",

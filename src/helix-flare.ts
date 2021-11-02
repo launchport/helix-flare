@@ -83,20 +83,24 @@ const helixFlare = async <TContext>(
       const { readable, writable } = new TransformStream()
       const stream = writable.getWriter()
 
-      const intervalId = setInterval(() => {
-        writeToStream(stream, ':\n\n')
-      }, 5000)
+      // @todo ping? test's don't finish when running pings. is it an actual problem?
+      // @todo clean interval up on client disconnect
+      // const intervalId = setInterval(() => {
+      //   writeToStream(stream, ':\n\n')
+      // }, 5000)
+
+      const x = request.signal
 
       result
-        .subscribe((data: unknown) => {
+        .subscribe((data) => {
           writeToStream(stream, {
             event: 'next',
             data: JSON.stringify(data),
           })
         })
         .then(() => {
-          clearInterval(intervalId)
-          writeToStream(stream, 'event: complete\n\n')
+          // clearInterval(intervalId)
+          writeToStream(stream, { event: 'complete' })
         })
 
       return new Response(readable, {
