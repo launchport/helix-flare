@@ -3,7 +3,7 @@ import url from 'node:url'
 import { execSync } from 'node:child_process'
 
 import { Miniflare } from 'miniflare'
-import type { Options } from 'miniflare'
+import type { MiniflareOptions } from 'miniflare'
 
 const __filename = url.fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -27,7 +27,10 @@ export const buildWorkers = () => {
   execSync(buildCommand)
 }
 
-export const createWorker = (relativeWorkerPath: string, options?: Options) => {
+export const createWorker = (
+  relativeWorkerPath: string,
+  options?: MiniflareOptions,
+) => {
   const scriptPath = path.resolve(
     __dirname,
     'dist',

@@ -45,7 +45,7 @@ export async function getBytes(
   onChunk: (arr: Uint8Array) => void,
 ) {
   const reader = stream.getReader()
-  let result: ReadableStreamReaderReadResult
+  let result: ReadableStreamReadResult<Uint8Array>
   while (!(result = await reader.read()).done) {
     onChunk(result.value)
   }

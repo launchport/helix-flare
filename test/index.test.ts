@@ -18,7 +18,7 @@ describe('helix-flare', () => {
       body: JSON.stringify({ query }),
     })
 
-    expect((await res.json()).data).toMatchInlineSnapshot(`
+    expect(((await res.json()) as any).data).toMatchInlineSnapshot(`
       Object {
         "user": "John Doe",
       }

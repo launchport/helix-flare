@@ -26,14 +26,15 @@
     "graphql-middleware": "6.1.11"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "3.0.0",
+    "@cloudflare/workers-types": "3.1.1",
     "@graphql-tools/schema": "8.3.1",
     "@graphql-tools/wrap": "8.3.1",
     "@types/jest": "27.0.2",
     "esbuild": "0.13.11",
     "graphql-sse": "1.0.4",
     "jest": "27.3.1",
-    "miniflare": "1.4.1",
+    "jest-environment-node": "27.3.1",
+    "miniflare": "2.0.0-next.2",
     "nanoevents": "6.0.2",
     "node-fetch": "3.0.0",
     "patch-package": "6.4.7",

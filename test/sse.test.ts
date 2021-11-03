@@ -20,7 +20,7 @@ describe('SSE', () => {
     })
 
     const subscriptionPromise = new Promise<void>(async (resolve, reject) => {
-      sseClient.subscribe(
+      const unsub = sseClient.subscribe(
         {
           query: /* GraphQL */ `
             subscription {
@@ -29,9 +29,10 @@ describe('SSE', () => {
           `,
         },
         {
-          next: ({ data }) => {
-            if (data?.upvotes === 1) {
+          next: (data) => {
+            if (data.data?.upvotes === 1) {
               resolve()
+              unsub()
             }
           },
           error: (error) => reject(error),

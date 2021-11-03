@@ -89,7 +89,10 @@ const helixFlare = async <TContext>(
       //   writeToStream(stream, ':\n\n')
       // }, 5000)
 
-      const x = request.signal
+      ;(request.signal as any).addEventListener('abort', async () => {
+        // clearInterval(intervalId)
+        await stream.close()
+      })
 
       result
         .subscribe((data) => {

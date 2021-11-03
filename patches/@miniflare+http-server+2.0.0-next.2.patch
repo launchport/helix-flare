@@ -1,0 +1,13 @@
+diff --git a/node_modules/@miniflare/http-server/dist/src/index.js b/node_modules/@miniflare/http-server/dist/src/index.js
+index 69f51d0..e852c31 100644
+--- a/node_modules/@miniflare/http-server/dist/src/index.js
++++ b/node_modules/@miniflare/http-server/dist/src/index.js
+@@ -26,7 +26,7 @@ import {
+ import { randomHex } from "@miniflare/shared";
+ import { coupleWebSocket } from "@miniflare/web-sockets";
+ import { Headers } from "undici";
+-import { WebSocketServer } from "ws";
++import { WebSocketServer } from "ws/wrapper.mjs";
+ 
+ // packages/http-server/src/helpers.ts
+ import { networkInterfaces } from "os";

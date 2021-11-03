@@ -17,7 +17,7 @@ it('should do something', async () => {
       body: JSON.stringify({ query }),
     })
 
-    return (await res.json()).data
+    return ((await res.json()) as any).data
   }
 
   let res = await query(/* GraphQL */ `

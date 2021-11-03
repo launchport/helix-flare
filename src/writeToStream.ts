@@ -6,7 +6,7 @@ type Event = {
 type Payload = Event | string
 
 export const writeToStream = async (
-  writer: WritableStreamWriter,
+  writer: WritableStreamDefaultWriter,
   payload: Payload,
 ) => {
   const encoder = new TextEncoder()

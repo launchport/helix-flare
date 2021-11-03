@@ -9,6 +9,6 @@
     "module": "esnext",
     "types": ["@cloudflare/workers-types", "jest"]
   },
-  "include": ["src"],
+  "include": ["src", "test"],
   "exclude": ["node_modules", "dist/"]
 }

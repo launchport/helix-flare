@@ -53,23 +53,22 @@ export class NewsArticleObject implements DurableObject {
   }
 }
 
-const Worker: ExportedHandler<{ NEWS_ARTICLE_OBJECT: DurableObjectNamespace }> =
-  {
-    async fetch(request, env) {
-      const schema = wrapSchema({
-        schema: makeExecutableSchema({ typeDefs }),
-        executor: createExecutor<{}, { articleId: string }>(
-          request,
-          async (args) => {
-            const doId = env.NEWS_ARTICLE_OBJECT.idFromString(args.articleId)
+export default {
+  async fetch(request: Request, env: any) {
+    // request.signal.addEventListener('abort', () => {})
 
-            return env.NEWS_ARTICLE_OBJECT.get(doId)
-          },
-        ),
-      })
+    const schema = wrapSchema({
+      schema: makeExecutableSchema({ typeDefs }),
+      executor: createExecutor<{}, { articleId: string }>(
+        request,
+        async (args) => {
+          const doId = env.NEWS_ARTICLE_OBJECT.idFromName(args.articleId)
 
-      return helixFlare(request, schema)
-    },
-  }
+          return env.NEWS_ARTICLE_OBJECT.get(doId)
+        },
+      ),
+    })
 
-export default Worker
+    return helixFlare(request, schema)
+  },
+}
