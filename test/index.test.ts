@@ -55,4 +55,29 @@ describe('helix-flare', () => {
       }
     `)
   })
+
+  it('should resolve errors from executor', async () => {
+    const worker = createWorker('./executor-error.worker.ts')
+
+    const res = await worker.dispatchFetch('file:///', {
+      method: 'POST',
+      body: JSON.stringify({ query: '{ hello }' }),
+    })
+    expect((await res.json<any>()).errors).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "locations": Array [
+            Object {
+              "column": 3,
+              "line": 1,
+            },
+          ],
+          "message": "Should propagate",
+          "path": Array [
+            "hello",
+          ],
+        },
+      ]
+    `)
+  })
 })

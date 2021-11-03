@@ -1,6 +1,5 @@
-import type { Config } from '@jest/types'
-
-const config: Config.InitialOptions = {
+/** @type {import('@jest/types').Config.InitialOptions} */
+const config = {
   testEnvironment: '<rootDir>/custom-test-env.mjs',
   preset: 'ts-jest/presets/default-esm',
   globals: { 'ts-jest': { useESM: true } },

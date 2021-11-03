@@ -1,5 +1,5 @@
 diff --git a/node_modules/@miniflare/http-server/dist/src/index.js b/node_modules/@miniflare/http-server/dist/src/index.js
-index 69f51d0..e852c31 100644
+index 6488c53..bf60eb7 100644
 --- a/node_modules/@miniflare/http-server/dist/src/index.js
 +++ b/node_modules/@miniflare/http-server/dist/src/index.js
 @@ -26,7 +26,7 @@ import {

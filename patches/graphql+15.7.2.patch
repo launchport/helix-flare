@@ -1,0 +1,24 @@
+diff --git a/node_modules/graphql/error/GraphQLError.js b/node_modules/graphql/error/GraphQLError.js
+index e4c6b8d..3cd7fac 100644
+--- a/node_modules/graphql/error/GraphQLError.js
++++ b/node_modules/graphql/error/GraphQLError.js
+@@ -107,7 +107,18 @@ var GraphQLError = /*#__PURE__*/function (_Error) {
+ 
+     var _this;
+ 
+-    _classCallCheck(this, GraphQLError);
++    // _classCallCheck(this, GraphQLError);
++    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++    // @todo `helix-flare`
++    // If `_classCallCheck` in line 110 is enabled we get the following error:
++    //
++    // TypeError: Cannot call a class as a function
++    //       at _classCallCheck (node_modules/graphql/error/GraphQLError.js:27:99)
++    //       at new GraphQLError6 (node_modules/graphql/error/GraphQLError.js:110:5)
++    //       at node_modules/graphql-helix/dist-esm/process-request.mjs:196:49
++    //       at processRequest (node_modules/graphql-helix/dist-esm/process-request.mjs:223:25)
++    //       at helixFlare (src/helix-flare.ts:58:26)
++
+ 
+     _this = _super.call(this, message);
+     _this.name = 'GraphQLError';
