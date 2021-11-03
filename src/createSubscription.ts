@@ -1,13 +1,13 @@
 import { createNanoEvents } from 'nanoevents'
 import EventIterator from 'event-iterator'
 
-const events = createNanoEvents()
-
 export const STOP = Symbol('STOP')
+
+const events = createNanoEvents()
 
 const subscribeToNanoEvent = <TValue>(event: string) =>
   new EventIterator<TValue>(({ push, stop }) => {
-    const unsubscribe = events.on(event, (data) => {
+    const unsubscribe = events.on(event, (data: TValue | typeof STOP) => {
       if (data === STOP) {
         stop()
       } else {
@@ -27,7 +27,7 @@ export const createSubscription = <TValue = unknown, TResolved = TValue>({
   resolve?: (value: TValue) => Promise<TResolved> | TResolved
   getInitialValue?: () => Promise<TValue> | TValue
 }) => {
-  const emitter = (value: TValue) => events.emit(topic, value)
+  const emitter = (value: TValue | typeof STOP) => events.emit(topic, value)
 
   const resolver = async function* () {
     if (getInitialValue) {
