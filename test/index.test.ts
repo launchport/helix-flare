@@ -18,9 +18,11 @@ describe('helix-flare', () => {
       body: JSON.stringify({ query }),
     })
 
-    expect(((await res.json()) as any).data).toMatchInlineSnapshot(`
+    expect(await res.json<unknown>()).toMatchInlineSnapshot(`
       Object {
-        "user": "John Doe",
+        "data": Object {
+          "user": "John Doe",
+        },
       }
     `)
   })
@@ -33,5 +35,24 @@ describe('helix-flare', () => {
     })
 
     expect(res.headers.get('content-type')).toBe('text/html')
+  })
+
+  it('should resolve via GET', async () => {
+    const worker = createWorker('./index.worker.ts')
+    const queryParams = new URLSearchParams({
+      query: 'query { user }',
+    }).toString()
+
+    const res = await worker.dispatchFetch(`file:?${queryParams}`, {
+      method: 'GET',
+    })
+
+    expect(await res.json<unknown>()).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "user": "John Doe",
+        },
+      }
+    `)
   })
 })

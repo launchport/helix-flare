@@ -1,12 +1,11 @@
 export const createHelixRequest = async (request: Request) => {
   const url = new URL(request.url)
-  const searchParams = new URLSearchParams(url.search)
-  const body = await request.text()
+  const query = Object.fromEntries(new URLSearchParams(url.search))
 
   return {
-    body: body ? JSON.parse(body) : undefined,
+    body: request.method === 'POST' ? await request.json() : undefined,
     headers: request.headers,
     method: request.method,
-    query: searchParams.toString(),
+    query,
   }
 }
