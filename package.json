@@ -1,6 +1,6 @@
 {
   "name": "helix-flare",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "GraphQL Helix for your Cloudflare Workers",
   "module": "./dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,7 +22,7 @@
   "dependencies": {
     "event-iterator": "2.0.0",
     "graphql": "^15",
-    "graphql-helix": "1.9.0",
+    "graphql-helix": "1.8.4",
     "graphql-middleware": "6.1.11"
   },
   "devDependencies": {

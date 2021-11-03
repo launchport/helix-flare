@@ -69,7 +69,7 @@ const helixFlare = async <TContext>(
         status: result.status,
         headers: {
           ...Object.fromEntries(
-            result.headers.map(({ name, value }: any) => [name, value]),
+            result.headers.map(({ name, value }) => [name, value]),
           ),
           'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json; charset=utf-8',

@@ -7,6 +7,7 @@ export default {
     const typeDefs = /* GraphQL */ `
       type Query {
         user: String!
+        context: String!
       }
     `
 
@@ -15,10 +16,13 @@ export default {
       resolvers: {
         Query: {
           user: () => 'John Doe',
+          context: (_, __, context) => context.color,
         },
       },
     })
 
-    return helixFlare(request, schema)
+    return helixFlare(request, schema, {
+      contextFactory: () => ({ color: 'papaya' }),
+    })
   },
 }

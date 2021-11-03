@@ -56,6 +56,23 @@ describe('helix-flare', () => {
     `)
   })
 
+  it('should retain context in worker', async () => {
+    const worker = createWorker('./index.worker.ts')
+
+    const res = await worker.dispatchFetch('file:', {
+      method: 'POST',
+      body: JSON.stringify({ query: 'query { context }' }),
+    })
+
+    expect((await res.json<any>()).data).toMatchInlineSnapshot(`
+      Object {
+        "context": "papaya",
+      }
+    `)
+  })
+
+  it('should retain context in durable object', async () => {})
+
   it('should resolve errors from executor', async () => {
     const worker = createWorker('./executor-error.worker.ts')
 

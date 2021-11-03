@@ -17,7 +17,9 @@ const Worker: ExportedHandler<{ HELIX_OBJECT: any }> = {
   async fetch(request, env) {
     const executor = createExecutor<any, { id?: string }>(
       request,
-      async (args) => {
+      async (args, context) => {
+        // @todo test for context
+        console.log({ context })
         const doId = args.id
           ? env.HELIX_OBJECT.idFromString(args.id)
           : env.HELIX_OBJECT.idFromName('someRandomId')
@@ -31,7 +33,15 @@ const Worker: ExportedHandler<{ HELIX_OBJECT: any }> = {
       executor,
     })
 
-    return helixFlare(request, schema)
+    return helixFlare(request, schema, {
+      middlewares: [
+        (resolve, root, args, context, info) => {
+          context.foo = 'bar'
+
+          return resolve(root, args, context, info)
+        },
+      ],
+    })
   },
 }
 
@@ -48,7 +58,7 @@ export class HelixObject {
       typeDefs,
       resolvers: {
         Mutation: {
-          start: () => {
+          start: (_, __, ctx) => {
             this.status = 'started'
             return this.state.id.toString()
           },

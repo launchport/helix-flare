@@ -4,34 +4,36 @@ beforeAll(() => {
   buildWorkers()
 })
 
-it('should do something', async () => {
-  const worker = createWorker('./durable-object.worker.ts', {
-    durableObjects: {
-      HELIX_OBJECT: 'HelixObject',
-    },
-  })
-
-  const query = async (query: string) => {
-    const res = await worker.dispatchFetch('file:', {
-      method: 'POST',
-      body: JSON.stringify({ query }),
+describe('Durable object worker', () => {
+  it('should mutate and resolve', async () => {
+    const worker = createWorker('./durable-object.worker.ts', {
+      durableObjects: {
+        HELIX_OBJECT: 'HelixObject',
+      },
     })
 
-    return ((await res.json()) as any).data
-  }
+    const query = async <TResult = any>(query: string) => {
+      const res = await worker.dispatchFetch('file:', {
+        method: 'POST',
+        body: JSON.stringify({ query }),
+      })
 
-  let res = await query(/* GraphQL */ `
-    mutation {
-      start
+      return (await res.json<any>()).data
     }
-  `)
 
-  const doId = res.start
+    let res = await query(/* GraphQL */ `
+      mutation {
+        start
+      }
+    `)
 
-  res = await query(/* GraphQL */ `
+    const doId = res.start
+
+    res = await query(/* GraphQL */ `
     query {
       status(id: "${doId}")
     }
   `)
-  expect(res.status).toBe('started')
+    expect(res.status).toBe('started')
+  })
 })
