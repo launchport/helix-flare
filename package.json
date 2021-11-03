@@ -1,6 +1,6 @@
 {
   "name": "helix-flare",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "GraphQL Helix for your Cloudflare Workers",
   "module": "./src/index.ts",
   "exports": {
