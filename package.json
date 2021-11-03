@@ -1,17 +1,20 @@
 {
   "name": "helix-flare",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "GraphQL Helix for your Cloudflare Workers",
   "module": "./src/index.ts",
   "exports": {
     "./*": "./src/*.ts"
   },
+  "types": "dist/index.d.ts",
+  "type": "module",
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "tsup",
     "test": "NODE_OPTIONS=--experimental-vm-modules yarn jest",
+    "prepublishOnly": "yarn build",
     "postinstall": "patch-package"
   },
   "prettier": {
