@@ -44,10 +44,12 @@ export function createExecutor<
                 return
               }
 
-              if (message.event === 'complete') {
-                complete()
-              } else {
+              if (message.data) {
                 next(JSON.parse(message.data))
+
+                if (message.event === 'complete') {
+                  complete()
+                }
               }
             },
             onError: (e) => error(e),

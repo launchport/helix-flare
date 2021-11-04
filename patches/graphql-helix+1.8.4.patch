@@ -1,0 +1,27 @@
+diff --git a/node_modules/graphql-helix/dist-esm/process-request.mjs b/node_modules/graphql-helix/dist-esm/process-request.mjs
+index c87b414..cd2106a 100644
+--- a/node_modules/graphql-helix/dist-esm/process-request.mjs
++++ b/node_modules/graphql-helix/dist-esm/process-request.mjs
+@@ -89,7 +89,21 @@ export const processRequest = async (options) => {
+                         return {
+                             type: "PUSH",
+                             subscribe: async (onResult) => {
+-                                for await (const payload of result) {
++                                try {
++                                    for await (const payload of result) {
++                                        onResult(formatPayload({
++                                            payload,
++                                            context,
++                                            rootValue,
++                                            document,
++                                            operation,
++                                        }));
++                                    }
++                                } catch(error) {
++                                    const payload = {
++                                        errors: error.graphqlErrors || [new GraphQLError(error.message)],
++                                    }
++
+                                     onResult(formatPayload({
+                                         payload,
+                                         context,
