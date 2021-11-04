@@ -47,9 +47,7 @@ const helixFlare = async <TContext>(
 
   if (shouldRenderGraphiQL(helixRequest)) {
     return new Response(renderGraphiQL(), {
-      headers: {
-        'content-type': 'text/html',
-      },
+      headers: { 'Content-Type': 'text/html' },
     })
   } else {
     const { operationName, query, variables } =
@@ -89,7 +87,7 @@ const helixFlare = async <TContext>(
       //   writeToStream(stream, ':\n\n')
       // }, 5000)
 
-      ;(request.signal as any).addEventListener('abort', async () => {
+      ;(request.signal as any)?.addEventListener('abort', async () => {
         // clearInterval(intervalId)
         await stream.close()
       })

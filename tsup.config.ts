@@ -4,6 +4,6 @@ export const tsup: Options = {
   dts: true,
   clean: true,
   format: ['esm'],
-  minify: true,
+  // minify: true,
   entryPoints: ['src/index.ts'],
 }

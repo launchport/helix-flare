@@ -22,7 +22,10 @@ export class NewsArticleObject implements DurableObject {
   private upvotes = 0
 
   async fetch(request: Request) {
-    const [emitUpvote, upvoteResolver] = createSubscription<number>({
+    const [emitUpvote, upvoteResolver] = createSubscription<
+      number,
+      { upvotes: number }
+    >({
       topic: 'UPVOTE',
       resolve: (value) => ({ upvotes: value }),
       getInitialValue: () => this.upvotes,
