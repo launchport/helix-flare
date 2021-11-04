@@ -59,13 +59,24 @@ export function createExecutor<
         },
       })
     } else {
-      const response = await durableObject.fetch(request.url, {
-        method: request.method,
-        body,
-        headers,
-      })
+      try {
+        const response = await durableObject.fetch(request.url, {
+          method: request.method,
+          body,
+          headers,
+        })
 
-      return await response.json()
+        return await response.json()
+      } catch (e: any) {
+        // for some reason the errors may not origin from `Error` in this case
+        // we receive `Unexpected error value: {}` which is not very meaningful
+        // wrapping it with Error will transport its original meaning
+        if (e instanceof Error) {
+          throw e
+        } else {
+          throw new Error(e)
+        }
+      }
     }
   }
 }
