@@ -5,14 +5,25 @@ import helixFlare, { createExecutor } from '../../src'
 
 const typeDefs = /* GraphQL */ `
   type Query {
-    hello: String!
+    error(byArg: Boolean, byContext: Boolean): String!
   }
 `
 
 const Worker: ExportedHandler<{ HELIX_OBJECT: any }> = {
   async fetch(request) {
-    const executor = createExecutor(request, async () => {
-      throw new Error('Should propagate')
+    const executor = createExecutor<
+      { byArg?: boolean },
+      { byContext?: boolean }
+    >(request, async (args, context) => {
+      if (args.byArg) {
+        throw new Error('Error by arg')
+      }
+
+      if (context.byContext) {
+        throw new Error('Error by context')
+      }
+
+      throw new Error('Unexpected error')
     })
 
     const schema = wrapSchema({
@@ -20,7 +31,17 @@ const Worker: ExportedHandler<{ HELIX_OBJECT: any }> = {
       executor,
     })
 
-    return helixFlare(request, schema)
+    return helixFlare(request, schema, {
+      middlewares: [
+        (resolve, parent, args, context, info) => {
+          if (args.byContext) {
+            context.byContext = true
+          }
+
+          return resolve(parent, args, context, info)
+        },
+      ],
+    })
   },
 }
 
