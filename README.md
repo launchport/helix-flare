@@ -119,32 +119,34 @@ export default {
 // post.ts
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { wrapSchema } from '@graphql-tools/wrap'
-import helixFlare, { createExecutor } from 'helix-flare'
+import helixFlare, { createExecutor, createSubscription } from 'helix-flare'
 import typeDefs from './typedefs'
-import { BehaviorSubject } from 'rxjs'
 
 export class Post implements DurableObject {
-  private likes?: BehaviorSubject<number>
-
-  constructor(state: DurableObjectState, env: Env) {
-    this.likes = new BehaviorSubject(0)
-  }
+  private likes = 0
 
   async fetch() {
+    const [emitLikes, likesSubscriptionResolver] = createSubscription<
+      number,
+      { subscribePostVotes: number }
+    >({
+      topic: 'likes',
+      resolve: (value) => ({ subscribePostVotes: value }),
+      getInitialValue: () => this.likes,
+    })
+
     const resolvers = {
       Mutation: {
         upvotePost: () => {
-          // increase likes by one
-          this.likes.next(this.likes.value() + 1)
-          return {
-            likes: this.likes.value(),
-            id: this.state.id,
-          }
+          this.likes++
+          emitLikes(this.likes)
+
+          return { likes: this.likes, id: this.state.id }
         },
       },
       Subscription: {
         subscribePostVotes: {
-          subscribe: () => observableToAsyncIterable(this.likes),
+          subscribe: () => likesSubscriptionResolver,
         },
       },
     }
