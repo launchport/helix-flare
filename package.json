@@ -22,7 +22,7 @@
   "dependencies": {
     "event-iterator": "2.0.0",
     "graphql": "^15",
-    "graphql-helix": "1.8.4",
+    "graphql-helix": "1.9.1",
     "graphql-middleware": "6.1.11"
   },
   "devDependencies": {

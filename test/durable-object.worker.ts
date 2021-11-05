@@ -19,7 +19,6 @@ const Worker: ExportedHandler<{ HELIX_OBJECT: any }> = {
       request,
       async (args, context) => {
         // @todo test for context
-        console.log({ context })
         const doId = args.id
           ? env.HELIX_OBJECT.idFromString(args.id)
           : env.HELIX_OBJECT.idFromName('someRandomId')
