@@ -1,5 +1,5 @@
 import { createNanoEvents } from 'nanoevents'
-import EventIterator from 'event-iterator'
+import { EventIterator } from 'event-iterator'
 
 export const STOP = Symbol('STOP')
 
@@ -27,6 +27,7 @@ export const createSubscription = <TValue = unknown, TResolved = TValue>({
   resolve?: (value: TValue) => Promise<TResolved> | TResolved
   getInitialValue?: () => Promise<TValue> | TValue
 }) => {
+  const iterator = subscribeToNanoEvent<TValue>(topic)
   const emitter = (value: TValue | typeof STOP) => events.emit(topic, value)
 
   const resolver = async function* () {
@@ -34,7 +35,7 @@ export const createSubscription = <TValue = unknown, TResolved = TValue>({
       yield await resolve(await getInitialValue())
     }
 
-    for await (const value of subscribeToNanoEvent<TValue>(topic)) {
+    for await (const value of iterator) {
       yield await resolve(value)
     }
   }
