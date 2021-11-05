@@ -12,7 +12,7 @@ export function createExecutor<
   request: Request,
   selectDurableObject: (
     args: TArgs,
-    context: TContext | undefined,
+    context: TContext,
   ) => Promise<DurableObjectStub>,
 ): AsyncExecutor<TContext, TArgs> {
   return async ({ variables, document, info, context }) => {
@@ -23,7 +23,10 @@ export function createExecutor<
     const query = print(document)
 
     const args = getArguments<TArgs>(info)
-    const durableObject = await selectDurableObject(args, context)
+    const durableObject = await selectDurableObject(
+      args,
+      context || ({} as TContext),
+    )
 
     const body = JSON.stringify({ query, variables })
     const headers = Object.fromEntries(request.headers.entries())

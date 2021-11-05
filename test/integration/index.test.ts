@@ -14,12 +14,12 @@ describe('helix-flare', () => {
     })
 
     await expect(res.json<unknown>()).resolves.toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "user": "John Doe",
-        },
-      }
-    `)
+                  Object {
+                    "data": Object {
+                      "user": "John Doe",
+                    },
+                  }
+              `)
   })
 
   it('should render GraphiQL', async () => {
@@ -41,12 +41,12 @@ describe('helix-flare', () => {
     })
 
     await expect(res.json<unknown>()).resolves.toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "user": "John Doe",
-        },
-      }
-    `)
+                  Object {
+                    "data": Object {
+                      "user": "John Doe",
+                    },
+                  }
+              `)
   })
 
   it('should retain context in worker', async () => {
@@ -58,12 +58,12 @@ describe('helix-flare', () => {
     })
 
     await expect(res.json<any>()).resolves.toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "context": "papaya",
-        },
-      }
-    `)
+                  Object {
+                    "data": Object {
+                      "context": "papaya",
+                    },
+                  }
+              `)
   })
 
   it('should retain context in durable object', async () => {
@@ -75,26 +75,18 @@ describe('helix-flare', () => {
 
     const res = await worker.dispatchFetch('file:///', {
       method: 'POST',
-      body: JSON.stringify({ query: '{ hello }' }),
+      body: JSON.stringify({ query: '{ error(byArg: true) }' }),
     })
-    await expect(res.json()).resolves.toMatchInlineSnapshot(`
-      Object {
-        "data": null,
-        "errors": Array [
-          Object {
-            "locations": Array [
-              Object {
-                "column": 3,
-                "line": 1,
-              },
-            ],
-            "message": "Should propagate",
-            "path": Array [
-              "hello",
-            ],
-          },
-        ],
-      }
-    `)
+    expect((await res.json<any>()).errors[0].message).toMatchInlineSnapshot(
+      `"Error by arg"`,
+    )
+
+    const res2 = await worker.dispatchFetch('file:///', {
+      method: 'POST',
+      body: JSON.stringify({ query: '{ error(byContext: true) }' }),
+    })
+    expect((await res2.json<any>()).errors[0].message).toMatchInlineSnapshot(
+      `"Error by context"`,
+    )
   })
 })
