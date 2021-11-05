@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "tsup",
-    "test": "NODE_OPTIONS=--experimental-vm-modules yarn jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules yarn jest --forceExit",
     "prepublishOnly": "yarn test && yarn build",
     "postinstall": "patch-package"
   },

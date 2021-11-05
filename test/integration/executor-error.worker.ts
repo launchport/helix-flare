@@ -1,7 +1,7 @@
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { wrapSchema } from '@graphql-tools/wrap'
 
-import helixFlare, { createExecutor } from '../src'
+import helixFlare, { createExecutor } from '../../src'
 
 const typeDefs = /* GraphQL */ `
   type Query {

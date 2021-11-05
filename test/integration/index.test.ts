@@ -7,18 +7,13 @@ beforeAll(() => {
 describe('helix-flare', () => {
   it('should resolve a simple query', async () => {
     const worker = createWorker('./index.worker.ts')
-    const query = /* GraphQL */ `
-      query {
-        user
-      }
-    `
 
     const res = await worker.dispatchFetch('file:', {
       method: 'POST',
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ query: 'query { user }' }),
     })
 
-    expect(await res.json<unknown>()).toMatchInlineSnapshot(`
+    await expect(res.json<unknown>()).resolves.toMatchInlineSnapshot(`
       Object {
         "data": Object {
           "user": "John Doe",
@@ -39,15 +34,13 @@ describe('helix-flare', () => {
 
   it('should resolve via GET', async () => {
     const worker = createWorker('./index.worker.ts')
-    const queryParams = new URLSearchParams({
-      query: 'query { user }',
-    }).toString()
+    const queryParams = new URLSearchParams({ query: 'query { user }' })
 
-    const res = await worker.dispatchFetch(`file:?${queryParams}`, {
+    const res = await worker.dispatchFetch(`file:?${queryParams.toString()}`, {
       method: 'GET',
     })
 
-    expect(await res.json<unknown>()).toMatchInlineSnapshot(`
+    await expect(res.json<unknown>()).resolves.toMatchInlineSnapshot(`
       Object {
         "data": Object {
           "user": "John Doe",
@@ -64,14 +57,18 @@ describe('helix-flare', () => {
       body: JSON.stringify({ query: 'query { context }' }),
     })
 
-    expect((await res.json<any>()).data).toMatchInlineSnapshot(`
+    await expect(res.json<any>()).resolves.toMatchInlineSnapshot(`
       Object {
-        "context": "papaya",
+        "data": Object {
+          "context": "papaya",
+        },
       }
     `)
   })
 
-  it('should retain context in durable object', async () => {})
+  it('should retain context in durable object', async () => {
+    // @todo
+  })
 
   it('should resolve errors from executor', async () => {
     const worker = createWorker('./executor-error.worker.ts')
@@ -80,21 +77,24 @@ describe('helix-flare', () => {
       method: 'POST',
       body: JSON.stringify({ query: '{ hello }' }),
     })
-    expect((await res.json<any>()).errors).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "locations": Array [
-            Object {
-              "column": 3,
-              "line": 1,
-            },
-          ],
-          "message": "Should propagate",
-          "path": Array [
-            "hello",
-          ],
-        },
-      ]
+    await expect(res.json()).resolves.toMatchInlineSnapshot(`
+      Object {
+        "data": null,
+        "errors": Array [
+          Object {
+            "locations": Array [
+              Object {
+                "column": 3,
+                "line": 1,
+              },
+            ],
+            "message": "Should propagate",
+            "path": Array [
+              "hello",
+            ],
+          },
+        ],
+      }
     `)
   })
 })

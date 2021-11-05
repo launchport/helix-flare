@@ -1,6 +1,6 @@
 import { makeExecutableSchema } from '@graphql-tools/schema'
 
-import helixFlare from '../src'
+import helixFlare from '../../src'
 
 export default {
   async fetch(request: Request) {

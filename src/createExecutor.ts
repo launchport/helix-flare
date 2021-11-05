@@ -6,15 +6,15 @@ import { fetchEventSource } from './fetchEventSource'
 import getArguments from './getArguments'
 
 export function createExecutor<
-  TContext extends Record<string, any>,
-  TArgs extends Record<string, any> = Record<string, any>,
+  TArgs extends Record<string, any>,
+  TContext extends Record<string, any> = Record<string, any>,
 >(
   request: Request,
   selectDurableObject: (
     args: TArgs,
     context: TContext | undefined,
   ) => Promise<DurableObjectStub>,
-): AsyncExecutor<TContext> {
+): AsyncExecutor<TContext, TArgs> {
   return async ({ variables, document, info, context }) => {
     if (!info) {
       throw new Error('No query info available.')

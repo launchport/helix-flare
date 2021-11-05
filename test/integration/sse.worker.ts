@@ -2,7 +2,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema'
 import { wrapSchema } from '@graphql-tools/wrap'
 import type { IResolvers } from 'graphql-middleware/dist/types'
 
-import helixFlare, { createExecutor, createSubscription } from '../src'
+import helixFlare, { createExecutor, createSubscription } from '../../src'
 
 const typeDefs = /* GraphQL */ `
   type Query {

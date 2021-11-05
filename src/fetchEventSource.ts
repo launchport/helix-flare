@@ -75,7 +75,7 @@ export function fetchEventSource(
         const response = await fetchFn(input, {
           ...rest,
           headers,
-          // signal: requestController.signal,
+          signal: requestController.signal,
         })
 
         await getBytes(

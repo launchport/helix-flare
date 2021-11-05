@@ -73,22 +73,16 @@ const helixFlare = async <TContext>(
           'Content-Type': 'application/json; charset=utf-8',
         },
       })
-    } else if (result.type === 'MULTIPART_RESPONSE') {
-      return new Response('@stream/@defer directives are not supported', {
-        status: 405,
-      })
     } else if (result.type === 'PUSH') {
       const { readable, writable } = new TransformStream()
       const stream = writable.getWriter()
 
-      // @todo ping? test's don't finish when running pings. is it an actual problem?
-      // @todo clean interval up on client disconnect
-      // const intervalId = setInterval(() => {
-      //   writeToStream(stream, ':\n\n')
-      // }, 5000)
+      const intervalId = setInterval(() => {
+        writeToStream(stream, ':\n\n')
+      }, 15000)
 
       ;(request.signal as any)?.addEventListener('abort', async () => {
-        // clearInterval(intervalId)
+        clearInterval(intervalId)
         await stream.close()
       })
 
@@ -100,7 +94,7 @@ const helixFlare = async <TContext>(
           })
         })
         .then(() => {
-          // clearInterval(intervalId)
+          clearInterval(intervalId)
           writeToStream(stream, { event: 'complete' })
         })
 
@@ -114,6 +108,10 @@ const helixFlare = async <TContext>(
           'Access-Control-Allow-Headers':
             'Origin, X-Requested-With, Content-Type, Accept',
         },
+      })
+    } else if (result.type === 'MULTIPART_RESPONSE') {
+      return new Response('@stream/@defer directives are not supported', {
+        status: 405,
       })
     } else {
       return new Response('not supported', { status: 405 })
