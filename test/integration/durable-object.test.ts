@@ -12,28 +12,29 @@ describe('Durable object worker', () => {
       },
     })
 
-    const query = async <TResult = any>(query: string) => {
+    const query = async <TResult = any>(query: string, variables?: object) => {
       const res = await worker.dispatchFetch('file:', {
         method: 'POST',
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query, variables }),
       })
 
-      return (await res.json<any>()).data
+      const result = await res.json<any>()
+
+      return result.data
     }
 
-    let res = await query(/* GraphQL */ `
-      mutation {
-        start
-      }
-    `)
+    let res = await query('mutation { start }')
 
     const doId = res.start
 
-    res = await query(/* GraphQL */ `
-    query {
-      status(id: "${doId}")
-    }
-  `)
+    res = await query(
+      /* GraphQL */ `
+        query ($doId: String!) {
+          status(id: $doId)
+        }
+      `,
+      { doId },
+    )
     expect(res.status).toBe('started')
   })
 })

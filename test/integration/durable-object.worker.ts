@@ -10,42 +10,26 @@ const typeDefs = /* GraphQL */ `
 
   type Query {
     status(id: String!): String!
+    doId: String!
   }
 `
 
 const Worker: ExportedHandler<{ HELIX_OBJECT: DurableObjectNamespace }> = {
   async fetch(request, env) {
-    const executor = createExecutor<{ id?: string }, { foo?: string }>(
-      request,
-      async (args, context) => {
-        if (!args.id) {
-          throw new Error('No ID')
-        }
+    const executor = createExecutor<{ id?: string }>(request, async (args) => {
+      const doId = args.id
+        ? env.HELIX_OBJECT.idFromString(args.id)
+        : env.HELIX_OBJECT.idFromName('someRandomId')
 
-        console.log('fotxetx', context?.foo)
-
-        const doId = args.id
-          ? env.HELIX_OBJECT.idFromString(args.id)
-          : env.HELIX_OBJECT.idFromName('someRandomId')
-
-        return env.HELIX_OBJECT.get(doId)
-      },
-    )
+      return env.HELIX_OBJECT.get(doId)
+    })
 
     const schema = wrapSchema({
       schema: makeExecutableSchema({ typeDefs }),
       executor,
     })
 
-    return helixFlare(request, schema, {
-      middlewares: [
-        (resolve, root, args, context, info) => {
-          context.foo = 'bar'
-
-          return resolve(root, args, context, info)
-        },
-      ],
-    })
+    return helixFlare(request, schema)
   },
 }
 

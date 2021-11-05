@@ -58,4 +58,6 @@ describe('SSE', () => {
 
     await expect(subscriptionPromise).resolves.toBeUndefined()
   })
+
+  it('subscription should work via GET', async () => {})
 })
