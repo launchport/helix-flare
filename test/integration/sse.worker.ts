@@ -62,7 +62,7 @@ export default {
 
     const schema = wrapSchema({
       schema: makeExecutableSchema({ typeDefs }),
-      executor: createExecutor<{}, { articleId: string }>(
+      executor: createExecutor<{ articleId?: string }>(
         request,
         async (args) => {
           const doId = env.NEWS_ARTICLE_OBJECT.idFromName(args.articleId)
