@@ -25,10 +25,10 @@
     "trailingComma": "all"
   },
   "dependencies": {
-    "event-iterator": "2.0.0",
+    "event-iterator": "^2",
     "graphql": "^15",
     "graphql-helix": "1.9.1",
-    "graphql-middleware": "6.1.11"
+    "graphql-middleware": "^6"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "3.1.1",
