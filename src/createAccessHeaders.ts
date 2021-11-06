@@ -1,16 +1,18 @@
-export const access = ({
-  origins = ['*'],
-  credentials = true,
-  methods = ['GET', 'HEAD', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
-  headers = [],
-  maxAge,
-}: {
+export type CreateAccessHeadersOptions = {
   origins?: Array<string | RegExp>
   credentials?: boolean
   methods?: string[]
   maxAge?: number
   headers?: string[]
-}) => {
+}
+
+export const createAccessHeaders = ({
+  origins = ['*'],
+  credentials = true,
+  methods = ['GET', 'HEAD', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
+  headers = ['Authorization, Content-Type, Cache-Control'],
+  maxAge = 7200,
+}: CreateAccessHeadersOptions = {}) => {
   return (request: Request) => {
     const isPreflight = request.method === 'OPTIONS'
     const origin = (request.headers.get('origin') || '').toLowerCase().trim()

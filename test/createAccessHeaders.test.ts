@@ -1,5 +1,5 @@
 import { Headers, Request, Response, fetch } from 'undici'
-import { access } from '../src/access'
+import { createAccessHeaders } from '../src/createAccessHeaders'
 
 // polyfill
 ;(global as any).Headers = Headers
@@ -7,9 +7,9 @@ import { access } from '../src/access'
 ;(global as any).Response = Response
 ;(global as any).fetch = fetch
 
-describe('access', () => {
+describe('createAccessHeaders', () => {
   it('should allow exact access', () => {
-    const cors = access({ origins: ['http://graphql.local'] })
+    const cors = createAccessHeaders({ origins: ['http://graphql.local'] })
 
     const req = new Request('https://example.io', {
       method: 'OPTIONS',
@@ -24,7 +24,7 @@ describe('access', () => {
   })
 
   it('should allow regex access', () => {
-    const cors = access({ origins: [/graphql\.io/] })
+    const cors = createAccessHeaders({ origins: [/graphql\.io/] })
 
     const req = new Request('https://example.io', {
       method: 'OPTIONS',
@@ -39,7 +39,7 @@ describe('access', () => {
   })
 
   it('should receive all headers', () => {
-    const cors = access({
+    const cors = createAccessHeaders({
       origins: [/graphql\.io/],
       methods: ['POST'],
       headers: ['x-lib'],

@@ -10,14 +10,14 @@ import { applyMiddleware } from 'graphql-middleware'
 import type { GraphQLSchema } from 'graphql'
 import type { IMiddleware } from 'graphql-middleware'
 
-import { access } from './access'
+import { createAccessHeaders } from './createAccessHeaders'
+import type { CreateAccessHeadersOptions } from './createAccessHeaders'
 import { createHelixRequest } from './createHelixRequest'
 import { ProcessRequestOptions } from 'graphql-helix/dist/types'
 import getPushResponseSSE from './getPushResponseSSE'
 
 type Options<TContext> = {
-  allowedOrigins?: string[]
-  credentials?: boolean
+  access?: CreateAccessHeadersOptions
   middlewares?: IMiddleware[]
   contextFactory?: ProcessRequestOptions<TContext, {}>['contextFactory']
 }
@@ -25,22 +25,13 @@ type Options<TContext> = {
 const helixFlare = async <TContext>(
   request: Request,
   schema: GraphQLSchema,
-  { middlewares = [], allowedOrigins, contextFactory }: Options<TContext> = {},
+  { middlewares = [], access, contextFactory }: Options<TContext> = {},
 ) => {
-  const cors = access({ origins: allowedOrigins, maxAge: 7200 })
+  const cors = createAccessHeaders(access)
   const { isPreflight, headers } = cors(request)
 
   if (isPreflight) {
-    return new Response('', {
-      status: 200,
-      headers,
-      // {
-      //   'Access-Control-Allow-Headers':
-      //     'Authorization, Content-Type, Cache-Control',
-      //   'Access-Control-Allow-Origin': '*',
-      //   'Access-Control-Max-Age': '7200',
-      // },
-    })
+    return new Response('', { status: 200, headers })
   }
 
   const helixRequest = await createHelixRequest(request)
