@@ -1,7 +1,6 @@
 import {
   getGraphQLParameters,
   getMultipartResponse,
-  getRegularResponse,
   processRequest,
   renderGraphiQL,
   shouldRenderGraphiQL,
@@ -15,6 +14,7 @@ import type { CreateAccessHeadersOptions } from './createAccessHeaders'
 import { createHelixRequest } from './createHelixRequest'
 import { ProcessRequestOptions } from 'graphql-helix/dist/types'
 import getPushResponseSSE from './getPushResponseSSE'
+import getResponse from './getResponse'
 
 type Options<TContext> = {
   access?: CreateAccessHeadersOptions
@@ -55,7 +55,7 @@ const helixFlare = async <TContext>(
 
     switch (result.type) {
       case 'RESPONSE':
-        return getRegularResponse(result, Response)
+        return getResponse(result)
       case 'PUSH':
         return getPushResponseSSE(result, request)
       case 'MULTIPART_RESPONSE':

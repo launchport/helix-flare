@@ -1495,7 +1495,7 @@ esutils@^2.0.2:
   resolved "https://registry.yarnpkg.com/esutils/-/esutils-2.0.3.tgz#74d2eb4de0b8da1293711910d50775b9b710ef64"
   integrity sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==
 
-event-iterator@2.0.0:
+event-iterator@^2:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/event-iterator/-/event-iterator-2.0.0.tgz#10f06740cc1e9fd6bc575f334c2bc1ae9d2dbf62"
   integrity sha512-KGft0ldl31BZVV//jj+IAIGCxkvvUkkON+ScH6zfoX+l+omX6001ggyRSpI0Io2Hlro0ThXotswCtfzS8UkIiQ==
@@ -1707,7 +1707,7 @@ graphql-helix@1.9.1:
   resolved "https://registry.yarnpkg.com/graphql-helix/-/graphql-helix-1.9.1.tgz#7bbb0c78642604ef531649f14800154b83b1fb45"
   integrity sha512-Of4iMFy+lesAF52RsgTlSUtgAlogWNQt8xp817fcgdJtGNO1bo4RPR4yXD5vZYHbw01Vm2fmaPOCUps5BJJSXw==
 
-graphql-middleware@6.1.11:
+graphql-middleware@^6:
   version "6.1.11"
   resolved "https://registry.yarnpkg.com/graphql-middleware/-/graphql-middleware-6.1.11.tgz#197baa3bc45c384898a9d04441052934fb9cefa7"
   integrity sha512-5thAGtAQmuKHsUkGtUFsqqtF78mWcWn//a/8bLaRnCmsQ6gjt+HBcGXmtZgbjmOfQ/UrrgGfwPV2+6w4TahGZA==

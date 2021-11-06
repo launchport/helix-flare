@@ -10,7 +10,7 @@ export const createAccessHeaders = ({
   origins = ['*'],
   credentials = true,
   methods = ['GET', 'HEAD', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
-  headers = ['Authorization, Content-Type, Cache-Control'],
+  headers = ['Accept', 'Authorization', 'Content-Type', 'If-None-Match'],
   maxAge = 7200,
 }: CreateAccessHeadersOptions = {}) => {
   return (request: Request) => {
@@ -28,11 +28,13 @@ export const createAccessHeaders = ({
     if (isPreflight) {
       responseHeaders.set(
         'Access-Control-Allow-Origin',
-        origins.some((allowedOrigin) =>
-          allowedOrigin instanceof RegExp
-            ? allowedOrigin.test(origin)
-            : allowedOrigin === origin,
-        )
+        origins?.includes('*')
+          ? '*'
+          : origins.some((allowedOrigin) =>
+              allowedOrigin instanceof RegExp
+                ? allowedOrigin.test(origin)
+                : allowedOrigin === origin,
+            )
           ? origin
           : '',
       )
