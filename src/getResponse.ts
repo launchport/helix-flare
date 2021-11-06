@@ -7,6 +7,7 @@ const getResponse = (result: Response<any, any>) => {
       ...Object.fromEntries(
         result.headers.map(({ name, value }) => [name, value]),
       ),
+      // preflight requests will handle allow origin requests
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json; charset=utf-8',
     },

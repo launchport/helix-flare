@@ -38,6 +38,24 @@ describe('createAccessHeaders', () => {
     ).toMatchInlineSnapshot(`"https://graphql.io"`)
   })
 
+  it('should allow callback access', () => {
+    const cors = createAccessHeaders({
+      origins: [(req) => req.headers.get('x-header') === '1'],
+    })
+
+    const req = new Request('https://example.io', {
+      method: 'OPTIONS',
+      headers: {
+        'x-header': '1',
+        origin: 'https://graphql.io',
+      },
+    })
+
+    expect(
+      cors(req as any).headers['access-control-allow-origin'],
+    ).toMatchInlineSnapshot(`"https://graphql.io"`)
+  })
+
   it('should receive all headers', () => {
     const cors = createAccessHeaders({
       origins: [/graphql\.io/],

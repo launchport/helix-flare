@@ -1,5 +1,5 @@
 export type CreateAccessHeadersOptions = {
-  origins?: Array<string | RegExp>
+  origins?: Array<string | RegExp | ((request: Request) => boolean)>
   credentials?: boolean
   methods?: string[]
   maxAge?: number
@@ -31,7 +31,9 @@ export const createAccessHeaders = ({
         origins?.includes('*')
           ? '*'
           : origins.some((allowedOrigin) =>
-              allowedOrigin instanceof RegExp
+              typeof allowedOrigin === 'function'
+                ? allowedOrigin(request)
+                : allowedOrigin instanceof RegExp
                 ? allowedOrigin.test(origin)
                 : allowedOrigin === origin,
             )
