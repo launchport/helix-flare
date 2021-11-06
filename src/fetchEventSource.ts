@@ -24,13 +24,10 @@
 import { getBytes, getLines, getMessages } from './parseSSE'
 import type { EventSourceMessage } from './parseSSE'
 
-export const EventStreamContentType = 'text/event-stream'
-
 const DefaultRetryInterval = 1000
 const LastEventId = 'last-event-id'
 
-// might want to revert to standard types: https://github.com/cloudflare/workers-types/issues/116
-export interface FetchEventSourceInit extends RequestInitializerDict {
+export interface FetchEventSourceInit extends RequestInit {
   headers?: Record<string, string>
   onMessage?: (ev: EventSourceMessage) => void
   onClose?: () => void
@@ -53,7 +50,7 @@ export function fetchEventSource(
   return new Promise<void>((resolve, reject) => {
     const headers = { ...inputHeaders }
     if (!headers.accept) {
-      headers.accept = EventStreamContentType
+      headers.accept = 'text/event-stream'
     }
 
     const requestController = new AbortController()
@@ -103,7 +100,6 @@ export function fetchEventSource(
         dispose()
         resolve()
       } catch (err) {
-        console.log(err)
         if (!requestController.signal.aborted) {
           // if we haven't aborted the request ourselves:
           try {
