@@ -1,25 +1,25 @@
 import {
   getGraphQLParameters,
+  getMultipartResponse,
+  getRegularResponse,
   processRequest,
   renderGraphiQL,
   shouldRenderGraphiQL,
 } from 'graphql-helix'
 import { applyMiddleware } from 'graphql-middleware'
 import type { GraphQLSchema } from 'graphql'
-import type { ExecutionContext } from 'graphql-helix'
 import type { IMiddleware } from 'graphql-middleware'
 
 import { access } from './access'
-import { writeToStream } from './writeToStream'
 import { createHelixRequest } from './createHelixRequest'
+import { ProcessRequestOptions } from 'graphql-helix/dist/types'
+import getPushResponseSSE from './getPushResponseSSE'
 
 type Options<TContext> = {
   allowedOrigins?: string[]
   credentials?: boolean
   middlewares?: IMiddleware[]
-  contextFactory?: (
-    executionContext: ExecutionContext,
-  ) => Promise<TContext> | TContext
+  contextFactory?: ProcessRequestOptions<TContext, {}>['contextFactory']
 }
 
 const helixFlare = async <TContext>(
@@ -33,7 +33,7 @@ const helixFlare = async <TContext>(
   if (isPreflight) {
     return new Response('', {
       status: 200,
-      headers: headers,
+      headers,
       // {
       //   'Access-Control-Allow-Headers':
       //     'Authorization, Content-Type, Cache-Control',
@@ -62,59 +62,15 @@ const helixFlare = async <TContext>(
       contextFactory,
     })
 
-    if (result.type === 'RESPONSE') {
-      return new Response(JSON.stringify(result.payload), {
-        status: result.status,
-        headers: {
-          ...Object.fromEntries(
-            result.headers.map(({ name, value }) => [name, value]),
-          ),
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-      })
-    } else if (result.type === 'PUSH') {
-      const { readable, writable } = new TransformStream()
-      const stream = writable.getWriter()
-
-      const intervalId = setInterval(() => {
-        writeToStream(stream, ':\n\n')
-      }, 15000)
-
-      ;(request.signal as any)?.addEventListener('abort', async () => {
-        clearInterval(intervalId)
-        await stream.close()
-      })
-
-      result
-        .subscribe((data) => {
-          writeToStream(stream, {
-            event: 'next',
-            data: JSON.stringify(data),
-          })
-        })
-        .then(() => {
-          clearInterval(intervalId)
-          writeToStream(stream, { event: 'complete' })
-        })
-
-      return new Response(readable, {
-        status: 200,
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          Connection: 'keep-alive',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers':
-            'Origin, X-Requested-With, Content-Type, Accept',
-        },
-      })
-    } else if (result.type === 'MULTIPART_RESPONSE') {
-      return new Response('@stream/@defer directives are not supported', {
-        status: 405,
-      })
-    } else {
-      return new Response('not supported', { status: 405 })
+    switch (result.type) {
+      case 'RESPONSE':
+        return getRegularResponse(result, Response)
+      case 'PUSH':
+        return getPushResponseSSE(result, request)
+      case 'MULTIPART_RESPONSE':
+        return getMultipartResponse(result, Response, ReadableStream as any)
+      default:
+        return new Response('Not supported.', { status: 405 })
     }
   }
 }
