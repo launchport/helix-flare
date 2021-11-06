@@ -5,7 +5,7 @@ export const access = ({
   headers = [],
   maxAge,
 }: {
-  origins?: string[]
+  origins?: Array<string | RegExp>
   credentials?: boolean
   methods?: string[]
   maxAge?: number
@@ -25,12 +25,14 @@ export const access = ({
 
     if (isPreflight) {
       responseHeaders.set(
-        'Access-Allow-Origin',
-        origins.includes('*')
-          ? origins.join(', ')
-          : origins
-              .filter((allowedOrigin) => allowedOrigin === origin)
-              .join(', '),
+        'Access-Control-Allow-Origin',
+        origins.some((allowedOrigin) =>
+          allowedOrigin instanceof RegExp
+            ? allowedOrigin.test(origin)
+            : allowedOrigin === origin,
+        )
+          ? origin
+          : '',
       )
       if (maxAge !== undefined) {
         responseHeaders.set('Access-Control-Max-Age', String(maxAge))
