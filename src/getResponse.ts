@@ -11,6 +11,7 @@ const getResponse = (
   return new Response(JSON.stringify(result.payload), {
     status: result.status,
     headers: {
+      'Content-Type': 'application/json; charset=utf-8',
       ...resultHeaders,
       ...headers,
     },
