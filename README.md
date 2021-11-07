@@ -2,14 +2,64 @@
 
 `helix-flare` helps you build GraphQL services on [Cloudflare Workers®](https://workers.cloudflare.com/) using [`graphql-helix`](https://github.com/contrawork/graphql-helix).
 
-**Features:**
+## Features
 
-- Add middlewares to your graphql service
-- Delegate execution to Durable Objects
+- Build GraphQL server on Cloudflare Workers
+- Delegate execution to Durable Objects (Workers act merely a proxy in this instance)
+- Add middlewares
 - Subscriptions with SSE
+
+## Upcoming features
+
 - Combine multiple worker to one endpoint
 
+## Installation
+
+```sh
+yarn add helix-flare
+
+## or
+
+npm install --save helix-flare
+```
+
 ## Usage
+
+### Simple worker handler
+
+`helixFlare(request: Request, schema: GraphQLSchema)` handles GraphQL requests and returns an appropriate response.
+
+<details>
+
+<summary>Show full example</summary>
+
+```ts
+import helixFlare from 'helix-flare'
+import { makeExecutableSchema } from '@graphql-tools/schema'
+
+export default {
+  async fetch(request: Request) {
+    const typeDefs = /* GraphQL */ `
+      type Query {
+        hello(name: String!): String!
+      }
+    `
+
+    const schema = makeExecutableSchema({
+      typeDefs,
+      resolvers: {
+        Query: {
+          user: (_, { name }) => `Hello ${name}!`,
+        },
+      },
+    })
+
+    return helixFlare(request, schema)
+  },
+}
+```
+
+</details>
 
 ### Delegate execution to Durable Objects
 
@@ -21,9 +71,9 @@
 
 ```ts
 // worker.ts
+import helixFlare, { createExecutor } from 'helix-flare'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { wrapSchema } from '@graphql-tools/wrap'
-import helixFlare, { createExecutor } from 'helix-flare'
 
 const typeDefs = /* GraphQL */ `
   type Post {
@@ -40,7 +90,7 @@ export default {
   async fetch(request: Request, env: Env) {
     const schema = wrapSchema({
       schema: makeExecutableSchema({ typeDefs }),
-      executor: createExecutor(request, async (args, context) => {
+      executor: createExecutor<{ postId?: string }>(request, async (args) => {
         if (!args.postId) {
           throw new Error('No postId argument found')
         }
@@ -65,9 +115,11 @@ Subscriptions work out of the box with [SSE](https://developer.mozilla.org/en-US
 
 <summary>Show full example</summary>
 
+**Shared schema**:
+
 ```ts
-// typedefs.ts
-const typeDefs = /* GraphQL */ `
+// schema.ts
+const schema = /* GraphQL */ `
   type Post {
     id: Int!
     votes: Int
@@ -84,20 +136,23 @@ const typeDefs = /* GraphQL */ `
     upvotePost(postId: Int!): Post
   }
 `
-export default typeDefs
+export default schema
 ```
 
 ```ts
 // worker.ts
+import helixFlare, { createExecutor } from 'helix-flare'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { wrapSchema } from '@graphql-tools/wrap'
-import helixFlare, { createExecutor } from 'helix-flare'
-import typeDefs from './typedefs'
+import typeDefs from './schema'
 
-export { Post } from './Post'
+export { Post } from './PostObject'
 
-export default {
-  async fetch(request: Request, env: Env) {
+// ExportedHandler from `@cloudflare/workers-types`
+type WorkerType = ExportedHandler<{ PostDurableObject: DurableObjectStub }>
+
+const Worker: WorkerType = {
+  async fetch(request, env) {
     const schema = wrapSchema({
       schema: makeExecutableSchema({ typeDefs }),
       executor: createExecutor(request, async (args, context) => {
@@ -106,6 +161,7 @@ export default {
         }
 
         const doId = env.PostDurableObject.idFromString(args.postId)
+
         return env.PostDurableObject.get(doId)
       }),
     })
@@ -113,10 +169,12 @@ export default {
     return helixFlare(request, schema)
   },
 }
+
+export default Worker
 ```
 
 ```ts
-// post.ts
+// PostObject.ts
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { wrapSchema } from '@graphql-tools/wrap'
 import helixFlare, { createExecutor, createSubscription } from 'helix-flare'
@@ -156,7 +214,7 @@ export class Post implements DurableObject {
       typeDefs,
     })
 
-    return helixflare(request, schema)
+    return helixFlare(request, schema)
   }
 }
 ```
@@ -164,3 +222,5 @@ export class Post implements DurableObject {
 </details>
 
 ### Combine multiple worker to one endpoint (stitching)
+
+`@todo`
