@@ -9,6 +9,9 @@
   "description": "GraphQL Helix for your Cloudflare Workers",
   "module": "./dist/index.js",
   "types": "dist/index.d.ts",
+  "engines": {
+    "node": ">=16"
+  },
   "type": "module",
   "files": [
     "dist"
@@ -16,7 +19,7 @@
   "scripts": {
     "build": "tsup",
     "test": "NODE_OPTIONS=--experimental-vm-modules yarn jest --forceExit",
-    "prepublishOnly": "yarn test && yarn build",
+    "prepublishOnly": "yarn tsc --noEmit && yarn test && yarn build",
     "postinstall": "patch-package"
   },
   "prettier": {
@@ -26,27 +29,26 @@
   },
   "dependencies": {
     "event-iterator": "^2",
-    "graphql": "^15",
+    "graphql": ">=15 <=16",
     "graphql-helix": "1.9.1",
     "graphql-middleware": "^6"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "3.1.1",
-    "@graphql-tools/schema": "8.3.1",
-    "@graphql-tools/wrap": "8.3.1",
+    "@cloudflare/workers-types": "^3.1.1",
+    "@graphql-tools/schema": "^8.3.1",
+    "@graphql-tools/wrap": "^8.3.1",
     "@types/jest": "27.0.2",
-    "esbuild": "0.13.12",
-    "graphql-sse": "1.0.5",
-    "jest": "27.3.1",
-    "jest-environment-node": "27.3.1",
+    "esbuild": "^0.13.12",
+    "graphql-sse": "^1.0.5",
+    "jest": "^27.3.1",
+    "jest-environment-node": "^27.3.1",
     "miniflare": "2.0.0-next.3",
     "nanoevents": "6.0.2",
-    "node-fetch": "3.0.0",
-    "patch-package": "6.4.7",
-    "prettier": "2.4.1",
-    "ts-jest": "27.0.7",
-    "tsup": "5.6.0",
-    "typescript": "4.4.4",
-    "undici": "4.9.5"
+    "patch-package": "^6.4.7",
+    "prettier": "^2.4.1",
+    "ts-jest": "^27.0.7",
+    "tsup": "^5.6.0",
+    "typescript": "^4.4.4",
+    "undici": "^4.9.5"
   }
 }

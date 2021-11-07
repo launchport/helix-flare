@@ -5,6 +5,6 @@ export const tsup: Options = {
   clean: true,
   target: 'node16',
   format: ['esm'],
-  // minify: true,
+  sourcemap: true,
   entryPoints: ['src/index.ts'],
 }
