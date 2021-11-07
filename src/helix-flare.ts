@@ -31,7 +31,7 @@ const helixFlare = async <TContext>(
   const { isPreflight, headers } = cors(request)
 
   if (isPreflight) {
-    return new Response('', { status: 200, headers })
+    return new Response(null, { status: 204, headers })
   }
 
   const helixRequest = await createHelixRequest(request)
@@ -55,8 +55,9 @@ const helixFlare = async <TContext>(
 
     switch (result.type) {
       case 'RESPONSE':
-        return getResponse(result)
+        return getResponse(result, headers)
       case 'PUSH':
+        // @todo cors headers
         return getPushResponseSSE(result, request)
       case 'MULTIPART_RESPONSE':
         return getMultipartResponse(result, Response, ReadableStream as any)

@@ -8,45 +8,54 @@ export type CreateAccessHeadersOptions = {
 
 export const createAccessHeaders = ({
   origins = ['*'],
-  credentials = true,
+  credentials = false,
   methods = ['GET', 'HEAD', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
-  headers = ['Accept', 'Authorization', 'Content-Type', 'If-None-Match'],
-  maxAge = 7200,
+  headers = [],
+  maxAge,
 }: CreateAccessHeadersOptions = {}) => {
   return (request: Request) => {
     const isPreflight = request.method === 'OPTIONS'
     const origin = (request.headers.get('origin') || '').toLowerCase().trim()
 
     const responseHeaders = new Headers()
-    if (!origins.includes('*')) {
-      responseHeaders.set('Vary', 'Origin')
-    }
+
     if (credentials) {
       responseHeaders.set('Access-Control-Allow-Credentials', 'true')
     }
 
+    const allowOrigin = origins.includes('*')
+      ? '*'
+      : origins.some((allowedOrigin) =>
+          typeof allowedOrigin === 'function'
+            ? allowedOrigin(request)
+            : allowedOrigin instanceof RegExp
+            ? allowedOrigin.test(origin)
+            : allowedOrigin === origin,
+        )
+      ? origin
+      : ''
+
+    responseHeaders.set('Access-Control-Allow-Origin', allowOrigin)
+
+    if (allowOrigin !== '*') {
+      responseHeaders.set('Vary', 'Origin')
+    }
+
     if (isPreflight) {
-      responseHeaders.set(
-        'Access-Control-Allow-Origin',
-        origins?.includes('*')
-          ? '*'
-          : origins.some((allowedOrigin) =>
-              typeof allowedOrigin === 'function'
-                ? allowedOrigin(request)
-                : allowedOrigin instanceof RegExp
-                ? allowedOrigin.test(origin)
-                : allowedOrigin === origin,
-            )
-          ? origin
-          : '',
-      )
       if (maxAge !== undefined) {
         responseHeaders.set('Access-Control-Max-Age', String(maxAge))
       }
       if (methods.length) {
         responseHeaders.set('Access-Control-Allow-Methods', methods.join(', '))
       }
-      if (headers.length) {
+      if (!headers.length) {
+        const reqHeaders = request.headers.get('access-control-request-headers')
+
+        if (reqHeaders) {
+          responseHeaders.set('Access-Control-Allow-Headers', reqHeaders)
+          responseHeaders.append('Vary', 'Access-Control-Allow-Headers')
+        }
+      } else {
         responseHeaders.set('Access-Control-Allow-Headers', headers.join(', '))
       }
     }
