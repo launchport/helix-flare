@@ -12,7 +12,7 @@ import type { IMiddleware } from 'graphql-middleware'
 import { createAccessHeaders } from './createAccessHeaders'
 import type { CreateAccessHeadersOptions } from './createAccessHeaders'
 import { createHelixRequest } from './createHelixRequest'
-import { ProcessRequestOptions } from 'graphql-helix/dist/types'
+import type { ProcessRequestOptions } from 'graphql-helix'
 import getPushResponseSSE from './getPushResponseSSE'
 import getResponse from './getResponse'
 

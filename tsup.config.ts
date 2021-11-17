@@ -4,7 +4,6 @@ export const tsup: Options = {
   dts: true,
   clean: true,
   target: 'node16',
-  format: ['esm'],
-  sourcemap: true,
+  format: ['esm', 'cjs'],
   entryPoints: ['src/index.ts'],
 }
