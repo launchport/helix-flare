@@ -1,30 +1,31 @@
 import path from 'node:path'
 import url from 'node:url'
-import { execSync } from 'node:child_process'
 
 import { Miniflare } from 'miniflare'
 import type { MiniflareOptions } from 'miniflare'
+import { buildSync } from 'esbuild'
+import globSync from 'tiny-glob/sync'
 
 const __filename = url.fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 export const buildWorkers = () => {
-  const buildCommand = [
-    'yarn',
-    'esbuild',
-    path.resolve(__dirname, '*.worker.ts'),
-    `--outdir=${path.resolve(__dirname, 'dist')}`,
-    '--bundle',
-    '--log-level=error',
-    '--platform=node',
-    '--format=esm',
-    '--sourcemap',
-    '--target=node16',
-    `--define:setImmediate=setTimeout`,
-    `--define:process.env.NODE_ENV='"production"'`,
-  ].join(' ')
+  const entryPoints = globSync(path.resolve(__dirname, '*.worker.ts'))
 
-  execSync(buildCommand)
+  buildSync({
+    entryPoints,
+    bundle: true,
+    logLevel: 'error',
+    target: 'node16',
+    platform: 'node',
+    outdir: path.resolve(__dirname, 'dist'),
+    sourcemap: true,
+    format: 'esm',
+    define: {
+      setImmediate: 'setTimeout',
+      'process.env.NODE_ENV': JSON.stringify('production'),
+    },
+  })
 }
 
 export const createWorker = (
