@@ -1,17 +1,19 @@
 # helix-flare
 
-`helix-flare` helps you build GraphQL services on [Cloudflare Workers®](https://workers.cloudflare.com/) using [`graphql-helix`](https://github.com/contrawork/graphql-helix).
+`helix-flare` helps you build GraphQL services on [Cloudflare Workers®](https://workers.cloudflare.com/) in an instant.
+
+With help of the great library [`graphql-helix`](https://github.com/contrawork/graphql-helix) this is made possible.
 
 ## Features
 
-- Build GraphQL server on Cloudflare Workers
-- Delegate execution to Durable Objects (Workers act merely a proxy in this instance)
-- Add middlewares
-- Subscriptions with SSE
+- Build GraphQL server on Cloudflare Workers in seconds
+- Delegate execution to [Durable Objects](https://developers.cloudflare.com/workers/runtime-apis/durable-objects). Workers will only act as a proxy in this instance
+- Add middlewares and context
+- Live subscriptions (over SSE)
 
-## Upcoming features
+## Upcoming
 
-- Combine multiple worker to one endpoint
+- Combine multiple worker to one endpoint (stitch)
 
 ## Installation
 
@@ -23,15 +25,93 @@ yarn add helix-flare
 npm install --save helix-flare
 ```
 
-## Usage
+## API
 
-### Simple worker handler
+### <code>helixFlare(request: Request, schema: GraphQLSchema)</code>
 
-`helixFlare(request: Request, schema: GraphQLSchema)` handles GraphQL requests and returns an appropriate response.
+**Returns: <code>Promise\<Response></code>**
+
+This will take a request from a worker (or durable object) and return a response via GraphQL.
+
+All you need is:
+
+```ts
+import helixFlare from 'helix-flare'
+import { makeExecutableSchema } from '@graphql-tools/schema'
+
+export default {
+  async fetch(request: Request) {
+    const typeDefs = /* GraphQL */ `
+      type Query {
+        hello: String!
+      }
+    `
+    const schema = makeExecutableSchema({
+      typeDefs,
+      resolvers: {
+        Query: { user: () => 'Hello World 🌍' },
+      },
+    })
+
+    return helixFlare(request, schema)
+  },
+}
+```
+
+With just a few lines you got your GraphQL server up and running.
+
+**Example call to worker:**
+
+```ts
+const workerURL = 'https://my.worker.dev/graphql'
+
+fetch(workerURL, {
+  body: JSON.stringify({ query: '{ hello }' }),
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+})
+
+// ➜ 'Hello World 🌍'
+```
+
+_Head to the [GraphQL docs](https://graphql.org/) for more information on how to build a GraphQL server._
+
+### <code>createExecutor(request, selectDurableObject)</code>
+
+**Returns: <a href="https://www.graphql-tools.com/docs/remote-schemas#creating-an-executor"><code>AsyncExecutor</code></a>**
+
+#### <code><b>request: Request</b></code>
+
+The request passed to the worker or durable object.
+
+#### <code><b>selectDurableObject: (args, context) => Promise&lt;DurableObjectStub></b></code>
+
+With this callback function you can select which durable object this request should be delegated to.
+
+```ts
+import helixFlare, { createExecutor } from 'helix-flare'
+import { makeExecutableSchema } from '@graphql-tools/schema'
+
+export default {
+  async fetch(request, env) {
+    const schema = makeExecutableSchema({
+      // schema and resolvers here…
+
+      // with this executor the requests will be delegated a durable object
+      executor: createExecutor(request, async (args) => {
+        return env.DURABLE_OBJECT.get(args.userId)
+      }),
+    })
+
+    return helixFlare(request, schema)
+  },
+}
+```
+
+## Examples
 
 <details>
-
-<summary>Show full example</summary>
+<summary><b>Simple resolver with arguments</b></summary>
 
 ```ts
 import helixFlare from 'helix-flare'
@@ -61,13 +141,8 @@ export default {
 
 </details>
 
-### Delegate execution to Durable Objects
-
-`createExecutor(request: Request, selectDurableObject: (args: Record<string, any | undefined>, context: undefined | TContext)` allows you to select your durable object in the worker, before forwarding the graphql request to it. You have access the graphql variables, parameters and the query or mutation the user is doing.
-
 <details>
-
-<summary>Show full example</summary>
+  <summary><b>Delegate execution to durable objects</b></summary>
 
 ```ts
 // worker.ts
@@ -107,13 +182,10 @@ export default {
 
 </details>
 
-### Subscriptions with SSE
+<details>
+  <summary><b>Subscriptions over server-sent events</b></summary>
 
 Subscriptions work out of the box with [SSE](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events). They can be done in worker but will be used in durable objects most of the time.
-
-<details>
-
-<summary>Show full example</summary>
 
 **Shared schema**:
 
@@ -221,6 +293,9 @@ export class Post implements DurableObject {
 
 </details>
 
-### Combine multiple worker to one endpoint (stitching)
+<details>
+  <summary><b>Combine multiple worker to one endpoint (stitching)</b></summary>
 
 `@todo`
+
+</details>
