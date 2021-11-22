@@ -3,9 +3,10 @@ name: Build and test
 on:
   push:
     branches: [ main ]
+    tags-ignore:
+      - *
   pull_request:
     branches: [ main ]
-
   workflow_dispatch:
 
 jobs:
@@ -18,6 +19,6 @@ jobs:
         with:
           node-version: '16'
           cache: 'yarn'
-      - run: yarn
+      - run: yarn install --frozen-lockfile
       - run: yarn build
       - run: yarn test
