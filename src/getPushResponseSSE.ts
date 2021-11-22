@@ -21,9 +21,10 @@ const getPushResponseSSE = (result: Push<any, any>, request: Request) => {
         data: JSON.stringify(data),
       })
     })
-    .then(() => {
+    .then(async () => {
       clearInterval(intervalId)
-      writeToStream(stream, { event: 'complete' })
+      await writeToStream(stream, { event: 'complete' })
+      stream.close()
     })
 
   return new Response(readable, {
