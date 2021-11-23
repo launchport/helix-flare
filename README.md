@@ -113,7 +113,7 @@ export default {
 
 **Returns: <code>[emitter, resolver]</code>**
 
-Inspired by hooks this function, which creates a subscription, returns an emitter and a resolver as a tuple.
+Inspired by hooks this function returns an emitter and a resolver as a tuple.
 With the emitter you can publish new events to the client. The resolver can just be used as is and put into the resolvers of your schema.
 
 #### `topic`
