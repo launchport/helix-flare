@@ -7,7 +7,8 @@ With help of the great library [`graphql-helix`](https://github.com/contrawork/g
 ## Features
 
 - Build GraphQL server on Cloudflare Workers in seconds
-- Delegate execution to [Durable Objects](https://developers.cloudflare.com/workers/runtime-apis/durable-objects). Workers will only act as a proxy in this instance
+- Delegate execution to [Durable Objects](https://developers.cloudflare.com/workers/runtime-apis/durable-objects). Workers will only act as a proxy.
+- Have one schema, resolve some things in your DO, others in the Worker
 - Add middlewares and context
 - Live subscriptions (over [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events))
 - Full type safety with Typescript
@@ -78,6 +79,8 @@ fetch(workerURL, {
 _Head to the [GraphQL docs](https://graphql.org/) for more information on how to build a GraphQL server._
 
 ### `createExecutor(request, selectDurableObject)`
+
+Allows you to resolve a query by forwarding the request to a durable object. The durable object can be selected by inspecting the graphql query in the **`selectDurableObject`** callback.
 
 **Returns: <a href="https://www.graphql-tools.com/docs/remote-schemas#creating-an-executor"><code>AsyncExecutor</code></a>**
 
