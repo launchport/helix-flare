@@ -9,7 +9,7 @@ With help of the great library [`graphql-helix`](https://github.com/contrawork/g
 - Build GraphQL server on Cloudflare Workers in seconds
 - Delegate execution to [Durable Objects](https://developers.cloudflare.com/workers/runtime-apis/durable-objects). Workers will only act as a proxy in this instance
 - Add middlewares and context
-- Live subscriptions (over SSE)
+- Live subscriptions (over [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events))
 
 ## Upcoming
 
@@ -27,9 +27,9 @@ npm install --save helix-flare
 
 ## API
 
-### <code>helixFlare(request: Request, schema: GraphQLSchema)</code>
+### `helixFlare(request: Request, schema: GraphQLSchema)`
 
-**Returns: <code>Promise\<Response></code>**
+**Returns: <code>Promise&lt;Response></code>**
 
 This will take a request from a worker (or durable object) and return a response via GraphQL.
 
@@ -76,15 +76,15 @@ fetch(workerURL, {
 
 _Head to the [GraphQL docs](https://graphql.org/) for more information on how to build a GraphQL server._
 
-### <code>createExecutor(request, selectDurableObject)</code>
+### `createExecutor(request, selectDurableObject)`
 
 **Returns: <a href="https://www.graphql-tools.com/docs/remote-schemas#creating-an-executor"><code>AsyncExecutor</code></a>**
 
-#### <code><b>request: Request</b></code>
+#### `request: Request`
 
 The request passed to the worker or durable object.
 
-#### <code><b>selectDurableObject: (args, context) => Promise&lt;DurableObjectStub></b></code>
+#### `selectDurableObject: (args, context) => Promise<DurableObjectStub>`
 
 With this callback function you can select which durable object this request should be delegated to.
 
@@ -106,6 +106,76 @@ export default {
     return helixFlare(request, schema)
   },
 }
+```
+
+### `createSubscription(options)`
+
+**Returns: <code>[emitter, resolver]</code>**
+
+Inspired by hooks this function, which creates a subscription, returns an emitter and a resolver as a tuple.
+With the emitter you can publish new events to the client. The resolver can just be used as is and put into the resolvers of your schema.
+
+#### `topic`
+
+**Type: <code>string</code>**
+
+An identifier for the subscription that is used internally.
+
+#### `resolve`
+
+**Type: <code>Function</code>**  
+**Default: <code>(value) => value</code>**
+
+This is to make subscription emissions less verbose. _See example below for more clarity._
+
+#### `getInitialValue`
+
+**Type: <code>Function</code>**  
+**Default: <code>undefined</code>**
+
+```ts
+import helixFlare, { createSubscription } from 'helix-flare'
+import { makeExecutableSchema } from '@graphql-tools/schema'
+
+export default {
+  async fetch(request, env) {
+    const [emit, resolver] = createSubscription({
+      topic: 'comments',
+    })
+
+    const typeDefs = /* GraphQL */ `
+      type Subscription {
+        comments($id: ID!): [String!]!
+      }
+    `
+
+    const schema = makeExecutableSchema({
+      typeDefs,
+      resolvers: {
+        comments: {
+          subscribe: resolver,
+        },
+      },
+    })
+
+    return helixFlare(request, schema)
+
+    // Now you can emit new comments like so:
+    emit({ comments: 'This is a new comment 💬' })
+  },
+}
+```
+
+To avoid repeating the need to emit the structure of the subscription resolver everytime you can use the `resolve` option:
+
+```ts
+const [emit, resolver] = createSubscription({
+  topic: 'comments',
+  resolve: (value) => ({ comments: value }),
+})
+
+// Now you can simply just emit the following
+emit('This is a new comment 💬')
 ```
 
 ## Examples
@@ -276,7 +346,7 @@ export class Post implements DurableObject {
       },
       Subscription: {
         subscribePostVotes: {
-          subscribe: () => likesSubscriptionResolver,
+          subscribe: likesSubscriptionResolver,
         },
       },
     }
