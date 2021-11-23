@@ -10,6 +10,7 @@ With help of the great library [`graphql-helix`](https://github.com/contrawork/g
 - Delegate execution to [Durable Objects](https://developers.cloudflare.com/workers/runtime-apis/durable-objects). Workers will only act as a proxy in this instance
 - Add middlewares and context
 - Live subscriptions (over [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events))
+- Full type safety with Typescript
 
 ## Upcoming
 
@@ -253,7 +254,7 @@ export default {
 </details>
 
 <details>
-  <summary><b>Subscriptions over server-sent events</b></summary>
+  <summary><b>Subscriptions in a durable object over server-sent events</b></summary>
 
 Subscriptions work out of the box with [SSE](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events). They can be done in worker but will be used in durable objects most of the time.
 
