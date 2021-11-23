@@ -2,8 +2,8 @@ import { observableToAsyncIterable } from '@graphql-tools/utils'
 import { print } from 'graphql'
 import type { AsyncExecutor } from '@graphql-tools/utils'
 
-import { fetchEventSource } from './fetchEventSource'
-import getArguments from './getArguments'
+import { fetchEventSource } from './sse/fetchEventSource'
+import getArguments from './utils/getArguments'
 
 export function createExecutor<
   TArgs extends Record<string, any>,

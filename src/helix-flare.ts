@@ -9,12 +9,12 @@ import { applyMiddleware } from 'graphql-middleware'
 import type { GraphQLSchema } from 'graphql'
 import type { IMiddleware } from 'graphql-middleware'
 
-import { createAccessHeaders } from './createAccessHeaders'
-import type { CreateAccessHeadersOptions } from './createAccessHeaders'
-import { createHelixRequest } from './createHelixRequest'
+import { createAccessHeaders } from './utils/createAccessHeaders'
+import type { CreateAccessHeadersOptions } from './utils/createAccessHeaders'
+import { createHelixRequest } from './utils/createHelixRequest'
 import type { ProcessRequestOptions } from 'graphql-helix'
-import getPushResponseSSE from './getPushResponseSSE'
-import getResponse from './getResponse'
+import getPushResponseSSE from './sse/getPushResponseSSE'
+import getResponse from './utils/getResponse'
 
 type Options<TContext> = {
   access?: CreateAccessHeadersOptions

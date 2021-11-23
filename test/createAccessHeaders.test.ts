@@ -1,5 +1,5 @@
 import { Headers, Request, Response, fetch } from 'undici'
-import { createAccessHeaders } from '../src/createAccessHeaders'
+import { createAccessHeaders } from '../src/utils/createAccessHeaders'
 
 // polyfill
 ;(global as any).Headers = Headers

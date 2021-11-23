@@ -1,10 +1,9 @@
 import { fetch } from 'undici'
-import { jest } from '@jest/globals'
 
 import http from 'node:http'
 import net from 'node:net'
 
-import { fetchEventSource } from '../src/fetchEventSource'
+import { fetchEventSource } from '../src/sse/fetchEventSource'
 
 let url: string
 let server: http.Server
