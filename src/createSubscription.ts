@@ -27,10 +27,10 @@ export const createSubscription = <TValue = unknown, TResolved = TValue>({
   resolve?: (value: TValue) => Promise<TResolved> | TResolved
   getInitialValue?: () => Promise<TValue> | TValue
 }) => {
-  const iterator = subscribeToNanoEvent<TValue>(topic)
   const emitter = (value: TValue | typeof STOP) => events.emit(topic, value)
 
   const resolver = async function* () {
+    const iterator = subscribeToNanoEvent<TValue>(topic)
     if (getInitialValue) {
       yield await resolve(await getInitialValue())
     }

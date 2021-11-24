@@ -31,12 +31,15 @@ describe('createSubscription', () => {
 
     const iterator = resolver()
 
-    emit(STOP)
     // skip initial value
     await iterator.next()
+
+    emit(STOP)
 
     await expect(iterator.next()).resolves.toEqual(
       expect.objectContaining({ done: true }),
     )
   })
+
+  it.todo('should handle multiple subscriptions correctly')
 })
