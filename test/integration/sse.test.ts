@@ -1,6 +1,5 @@
 import { buildWorkers, createWorker } from './utils'
 import { createClient } from 'graphql-sse'
-import { jest } from '@jest/globals'
 
 beforeAll(() => {
   buildWorkers()
@@ -59,5 +58,53 @@ describe('SSE', () => {
     await expect(subscriptionPromise).resolves.toBeUndefined()
   })
 
-  it('subscription should work via GET', async () => {})
+  it('should handle multiple subscriptions correctly', async () => {
+    const worker = createWorker('./sse.worker.ts', {
+      durableObjects: {
+        NEWS_ARTICLE_OBJECT: 'NewsArticleObject',
+      },
+    })
+
+    const fetchFn = worker.dispatchFetch.bind(worker)
+
+    const expectedUpvotes = 5
+
+    const clients = Array.from({ length: 2 }, () => {
+      return new Promise<number>((resolve, reject) => {
+        const sseClient = createClient({ url: 'file:///graphql', fetchFn })
+        let i = 0
+        const unsub = sseClient.subscribe<Record<string, 'upvotes'>>(
+          {
+            query: /* GraphQL */ `
+              subscription {
+                upvotes(articleId: "1")
+              }
+            `,
+          },
+          {
+            next: () => {
+              if (++i === expectedUpvotes) {
+                resolve(i)
+                unsub()
+              }
+            },
+            error: reject,
+            complete: () => {},
+          },
+        )
+      })
+    })
+
+    Array.from({ length: expectedUpvotes - 1 }).forEach(() => {
+      worker.dispatchFetch('file:///graphql', {
+        method: 'POST',
+        body: JSON.stringify({ query: `mutation { upvote(articleId: "1") }` }),
+      })
+    })
+
+    await expect(Promise.all(clients)).resolves.toEqual([
+      expectedUpvotes,
+      expectedUpvotes,
+    ])
+  })
 })

@@ -40,6 +40,4 @@ describe('createSubscription', () => {
       expect.objectContaining({ done: true }),
     )
   })
-
-  it.todo('should handle multiple subscriptions correctly')
 })
