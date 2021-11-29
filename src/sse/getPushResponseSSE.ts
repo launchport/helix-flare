@@ -11,9 +11,12 @@ const getPushResponseSSE = (result: Push<any, any>, request: Request) => {
 
   ;(request.signal as any)?.addEventListener('abort', () => {
     clearInterval(intervalId)
+
     try {
-      // Don't bother if already closed
-      stream.close()
+      if (!stream.closed) {
+        // Don't bother if already closed
+        stream.close()
+      }
     } catch {}
   })
 
