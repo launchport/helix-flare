@@ -1,5 +1,6 @@
 import type { CreateAccessHeadersOptions } from './utils/createAccessHeaders'
 import type { GetEnvelopedFn } from '@envelop/core'
+
 import core from './core'
 
 type Options = {
@@ -9,7 +10,7 @@ type Options = {
 const helixFlareEnvelop = async <PluginsContext extends any>(
   request: Request,
   getEnveloped: GetEnvelopedFn<PluginsContext>,
-  { access }: Options,
+  { access }: Options | undefined = {},
 ) => {
   const { schema, parse, validate, execute, contextFactory } = getEnveloped({
     req: request,
