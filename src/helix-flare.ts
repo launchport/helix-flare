@@ -1,6 +1,5 @@
+import { applyMiddleware, type IMiddleware } from 'graphql-middleware'
 import type { ProcessRequestOptions } from 'graphql-helix'
-import type { IMiddleware } from 'graphql-middleware'
-import { applyMiddleware } from 'graphql-middleware'
 import type { GraphQLSchema } from 'graphql'
 
 import type { CreateAccessHeadersOptions } from './utils/createAccessHeaders'

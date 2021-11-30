@@ -9,10 +9,10 @@ type Options = {
 
 const helixFlareEnvelop = async <PluginsContext extends any>(
   request: Request,
-  getEnveloped: GetEnvelopedFn<PluginsContext>,
+  getEnvelopedFn: GetEnvelopedFn<PluginsContext>,
   { access }: Options | undefined = {},
 ) => {
-  const { schema, parse, validate, execute, contextFactory } = getEnveloped({
+  const { schema, parse, validate, execute, contextFactory } = getEnvelopedFn({
     req: request,
   })
 
