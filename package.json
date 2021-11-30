@@ -37,6 +37,7 @@
     "graphql-helix"
   ],
   "dependencies": {
+    "@envelop/core": "1.6.2",
     "event-iterator": "^2",
     "graphql": "^15",
     "graphql-helix": "1.10.2",
