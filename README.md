@@ -11,6 +11,7 @@ With help of the great library [`graphql-helix`](https://github.com/contrawork/g
 - Have one schema, resolve some things in your DO, others in the Worker
 - Add middlewares and context
 - Live subscriptions (over [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events))
+- Easy to use with [`envelop`](https://github.com/dotansimha/envelop)
 - Full type safety with Typescript
 
 ## Upcoming
@@ -180,6 +181,29 @@ const [emit, resolver] = createSubscription({
 
 // Now you can simply just emit the following
 emit('This is a new comment 💬')
+```
+
+### Usage with [`envelop`](https://github.com/dotansimha/envelop)
+
+```ts
+import helixFlare from 'helix-flare/envelop'
+import { envelop, useSchema } from '@envelop/core'
+
+const schema = `…`
+
+const getEnvelopedFn = envelop({
+  plugins: [
+    useSchema(schema),
+    // add other envelop plugins here…
+  ],
+})
+
+// worker
+export default {
+  fetch(request: Request) {
+    return helixFlare(request, getEnvelopedFn)
+  },
+}
 ```
 
 ## Examples

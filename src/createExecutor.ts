@@ -1,6 +1,8 @@
-import { observableToAsyncIterable } from '@graphql-tools/utils'
+import {
+  observableToAsyncIterable,
+  type AsyncExecutor,
+} from '@graphql-tools/utils'
 import { print } from 'graphql'
-import type { AsyncExecutor } from '@graphql-tools/utils'
 
 import { fetchEventSource } from './sse/fetchEventSource'
 import getArguments from './utils/getArguments'

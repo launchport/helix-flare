@@ -5,5 +5,5 @@ export const tsup: Options = {
   clean: true,
   target: 'node16',
   format: ['esm', 'cjs'],
-  entryPoints: ['src/index.ts'],
+  entryPoints: ['src/index.ts', 'src/envelop.ts'],
 }
