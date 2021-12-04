@@ -1,5 +1,5 @@
 import { writeToStream } from './writeToStream'
-import { Push } from 'graphql-helix/dist-esm/types'
+import { type Push } from 'graphql-helix'
 
 const getPushResponseSSE = (result: Push<any, any>, request: Request) => {
   const { readable, writable } = new TransformStream()
@@ -13,16 +13,13 @@ const getPushResponseSSE = (result: Push<any, any>, request: Request) => {
     clearInterval(intervalId)
 
     try {
-      if (!stream.closed) {
-        // Don't bother if already closed
-        stream.close()
-      }
+      stream.close()
     } catch {}
   })
 
   result
-    .subscribe((data) => {
-      writeToStream(stream, {
+    .subscribe(async (data) => {
+      await writeToStream(stream, {
         event: 'next',
         data: JSON.stringify(data),
       })
@@ -30,7 +27,7 @@ const getPushResponseSSE = (result: Push<any, any>, request: Request) => {
     .then(async () => {
       clearInterval(intervalId)
       await writeToStream(stream, { event: 'complete' })
-      stream.close()
+      await stream.close()
     })
 
   return new Response(readable, {
