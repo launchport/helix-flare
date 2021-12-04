@@ -58,6 +58,11 @@
   "peerDependencies": {
     "@envelop/core": "1.6.2"
   },
+  "peerDependenciesMeta": {
+    "@envelop/core": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "event-iterator": "^2",
     "graphql": "^15",
