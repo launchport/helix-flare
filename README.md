@@ -96,12 +96,14 @@ With this callback function you can select which durable object this request sho
 ```ts
 import helixFlare, { createExecutor } from 'helix-flare'
 import { makeExecutableSchema } from '@graphql-tools/schema'
+import { wrapSchema } from '@graphql-tools/wrap'
 
 export default {
   async fetch(request, env) {
-    const schema = makeExecutableSchema({
-      // schema and resolvers here…
-
+    const schema = wrapSchema({
+      schema: makeExecutableSchema({
+        // type defs and resolvers here…
+      }),
       // with this executor the requests will be delegated a durable object
       executor: createExecutor(request, async (args) => {
         return env.DURABLE_OBJECT.get(args.userId)
