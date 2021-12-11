@@ -40,7 +40,7 @@
     "build": "tsup",
     "test": "NODE_OPTIONS=--experimental-vm-modules yarn jest --forceExit",
     "prepublishOnly": "yarn tsc --noEmit && yarn test && yarn build",
-    "postinstall": "patch-package"
+    "postinstall": "[ -z \"$RUN_POSTINSTALL\" ] || patch-package"
   },
   "prettier": {
     "singleQuote": true,
