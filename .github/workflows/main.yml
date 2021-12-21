@@ -19,6 +19,6 @@ jobs:
         with:
           node-version: '16'
           cache: 'yarn'
-      - run: yarn install --frozen-lockfile
+      - run: RUN_POSTINSTALL=1 yarn install --frozen-lockfile
       - run: yarn build
       - run: yarn test
