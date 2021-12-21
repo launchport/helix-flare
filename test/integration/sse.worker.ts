@@ -58,7 +58,10 @@ export class NewsArticleObject implements DurableObject {
 
 export default {
   async fetch(request: Request, env: any) {
-    // request.signal.addEventListener('abort', () => {})
+    const url = new URL(request.url)
+    if (url.pathname !== '/graphql') {
+      return new Response('Not found', { status: 404 })
+    }
 
     const schema = wrapSchema({
       schema: makeExecutableSchema({ typeDefs }),

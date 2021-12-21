@@ -1,8 +1,7 @@
 import path from 'node:path'
 import url from 'node:url'
 
-import { Miniflare } from 'miniflare'
-import type { MiniflareOptions } from 'miniflare'
+import { Miniflare, type MiniflareOptions } from 'miniflare'
 import { buildSync } from 'esbuild'
 import globSync from 'tiny-glob/sync'
 

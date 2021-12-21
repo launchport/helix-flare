@@ -14,7 +14,7 @@ describe('SSE', () => {
     })
 
     const sseClient = createClient({
-      url: 'file://test/graphql',
+      url: 'http://localhost:8787/graphql',
       fetchFn: worker.dispatchFetch.bind(worker),
     })
 
@@ -35,14 +35,12 @@ describe('SSE', () => {
             }
           },
           error: (error) => reject(error),
-          complete: () => {
-            console.log('complete?')
-          },
+          complete: () => {},
         },
       )
 
       setTimeout(() => {
-        worker.dispatchFetch('file://test/graphql', {
+        worker.dispatchFetch('http://localhost:8787/graphql', {
           method: 'POST',
           body: JSON.stringify({
             query: /* GraphQL */ `
@@ -65,13 +63,14 @@ describe('SSE', () => {
       },
     })
 
-    const fetchFn = worker.dispatchFetch.bind(worker)
-
     const expectedUpvotes = 5
 
     const clients = Array.from({ length: 2 }, () => {
       return new Promise<number>((resolve, reject) => {
-        const sseClient = createClient({ url: 'file:///graphql', fetchFn })
+        const sseClient = createClient({
+          url: 'http://localhost:8787/graphql',
+          fetchFn: worker.dispatchFetch.bind(worker),
+        })
         let i = 0
         const unsub = sseClient.subscribe<Record<string, 'upvotes'>>(
           {
@@ -96,7 +95,7 @@ describe('SSE', () => {
     })
 
     Array.from({ length: expectedUpvotes - 1 }).forEach(() => {
-      worker.dispatchFetch('file:///graphql', {
+      worker.dispatchFetch('http://localhost:8787/graphql', {
         method: 'POST',
         body: JSON.stringify({ query: `mutation { upvote(articleId: "1") }` }),
       })
