@@ -11,10 +11,6 @@ const getPushResponseSSE = (result: Push<any, any>, request: Request) => {
 
   ;(request.signal as any)?.addEventListener('abort', () => {
     clearInterval(intervalId)
-
-    try {
-      stream.close()
-    } catch {}
   })
 
   result
