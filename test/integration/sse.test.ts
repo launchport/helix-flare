@@ -11,6 +11,7 @@ describe('SSE', () => {
       durableObjects: {
         NEWS_ARTICLE_OBJECT: 'NewsArticleObject',
       },
+      globalTimers: true,
     })
 
     const sseClient = createClient({
@@ -61,6 +62,7 @@ describe('SSE', () => {
       durableObjects: {
         NEWS_ARTICLE_OBJECT: 'NewsArticleObject',
       },
+      globalTimers: true,
     })
 
     const expectedUpvotes = 5

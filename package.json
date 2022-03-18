@@ -56,39 +56,42 @@
     "graphql-helix"
   ],
   "peerDependencies": {
-    "@envelop/core": "1.6.2"
+    "@envelop/core": "^2.0.0"
   },
   "peerDependenciesMeta": {
     "@envelop/core": {
       "optional": true
     }
   },
+  "resolutions": {
+    "undici": "4.12.x"
+  },
   "dependencies": {
     "event-iterator": "^2",
     "graphql": "^15",
-    "graphql-helix": "1.10.3",
-    "graphql-middleware": "^6.1.13"
+    "graphql-helix": "1.12.0",
+    "graphql-middleware": "^6.1.18"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^3.3.0",
-    "@envelop/core": "1.6.5",
-    "@graphql-tools/schema": "^8.3.1",
-    "@graphql-tools/wrap": "^8.3.1",
-    "@types/jest": "27.0.3",
-    "esbuild": "^0.14.6",
-    "graphql-sse": "^1.0.6",
-    "jest": "^27.4.5",
-    "jest-environment-miniflare": "2.0.0-rc.4",
-    "jest-environment-node": "^27.4.4",
-    "miniflare": "2.0.0-rc.4",
+    "@cloudflare/workers-types": "^3.4.0",
+    "@envelop/core": "2.1.0",
+    "@graphql-tools/schema": "^8.3.3",
+    "@graphql-tools/wrap": "^8.4.6",
+    "@types/jest": "27.4.1",
+    "esbuild": "^0.14.27",
+    "graphql-sse": "^1.1.0",
+    "jest": "^27.5.1",
+    "jest-environment-miniflare": "2.2.0",
+    "jest-environment-node": "^27.5.1",
+    "miniflare": "2.2.0",
     "nanoevents": "6.0.2",
     "patch-package": "^6.4.7",
-    "prettier": "^2.5.1",
+    "prettier": "^2.6.0",
     "source-map-support": "^0.5.21",
     "tiny-glob": "0.2.9",
-    "ts-jest": "^27.1.2",
-    "tsup": "^5.11.6",
-    "typescript": "4.5.4",
-    "undici": "^4.12.0"
+    "ts-jest": "^27.1.3",
+    "tsup": "^5.12.1",
+    "typescript": "4.6.2",
+    "undici": "4.12.2"
   }
 }
