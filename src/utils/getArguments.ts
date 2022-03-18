@@ -12,7 +12,7 @@ const getArguments = <TArgs = Record<string, any>>(
 ) => {
   const name = info.fieldName
   const fieldDef = getType(info.parentType).getFields()[name]
-  const node = info.fieldNodes[0]
+  const [node] = info.fieldNodes
 
   return getArgumentValues(fieldDef, node, info.variableValues) as TArgs
 }
