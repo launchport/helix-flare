@@ -50,6 +50,7 @@ const helixFlare = async <TContext>(
         headers: { 'Content-Type': 'text/plain' },
       })
     }
+    throw e
   }
 }
 
