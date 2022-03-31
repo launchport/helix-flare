@@ -6,6 +6,7 @@
     "dan-lee <daniel@launchport.io>",
     "mosch <moritz@launchport.io>"
   ],
+  "repository": "https://github.com/launchport/helix-flare",
   "description": "GraphQL Helix for your Cloudflare Workers",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -39,8 +40,7 @@
   "scripts": {
     "build": "tsup",
     "test": "NODE_OPTIONS=--experimental-vm-modules yarn jest --forceExit",
-    "prepublishOnly": "yarn tsc --noEmit && yarn test && yarn build",
-    "postinstall": "[ -z \"$RUN_POSTINSTALL\" ] || patch-package"
+    "prepublishOnly": "yarn tsc --noEmit && yarn test && yarn build"
   },
   "prettier": {
     "singleQuote": true,
@@ -86,7 +86,6 @@
     "jest-environment-node": "^27.5.1",
     "miniflare": "2.3.0",
     "nanoevents": "6.0.2",
-    "patch-package": "^6.4.7",
     "prettier": "^2.6.1",
     "source-map-support": "^0.5.21",
     "tiny-glob": "0.2.9",

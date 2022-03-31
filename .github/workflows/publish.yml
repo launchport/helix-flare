@@ -17,8 +17,6 @@ jobs:
           node-version: '16'
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
-        env:
-          RUN_POSTINSTALL: '1'
       - run: yarn build
       - run: yarn test
       - uses: JS-DevTools/npm-publish@v1
