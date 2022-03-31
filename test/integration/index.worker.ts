@@ -1,9 +1,16 @@
 import { makeExecutableSchema } from '@graphql-tools/schema'
 
-import helixFlare from '../../src'
+import helixFlare, {
+  shouldRenderGraphiQL,
+  getGraphiQLResponse,
+} from '../../src'
 
 export default {
   async fetch(request: Request) {
+    if (await shouldRenderGraphiQL(request)) {
+      return getGraphiQLResponse()
+    }
+
     const typeDefs = /* GraphQL */ `
       type Query {
         user: String!

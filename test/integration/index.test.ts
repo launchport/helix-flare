@@ -30,6 +30,7 @@ describe('helix-flare', () => {
     })
 
     expect(res.headers.get('content-type')).toBe('text/html')
+    expect(await res.text()).toMatch('<title>GraphiQL</title>')
   })
 
   it('should resolve via GET', async () => {
