@@ -36,12 +36,21 @@ const helixFlare = async <TContext>(
   schema: GraphQLSchema,
   { middlewares = [], access, contextFactory }: Options<TContext> = {},
 ) => {
-  return core({
-    request,
-    schema: applyMiddleware(schema, ...middlewares),
-    contextFactory,
-    access,
-  })
+  try {
+    return core({
+      request,
+      schema: applyMiddleware(schema, ...middlewares),
+      contextFactory,
+      access,
+    })
+  } catch (e) {
+    if (e instanceof SyntaxError) {
+      return new Response('Bad request', {
+        status: 400,
+        headers: { 'Content-Type': 'text/plain' },
+      })
+    }
+  }
 }
 
 export default helixFlare
