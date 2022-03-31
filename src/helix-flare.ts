@@ -14,8 +14,13 @@ type Options<TContext> = SharedOptions & {
   contextFactory?: ProcessRequestOptions<TContext, {}>['contextFactory']
 }
 
-export const shouldRenderGraphiQL = async (request: Request) =>
-  helixShouldRenderGraphiQL(await createHelixRequest(request))
+export const shouldRenderGraphiQL = async (request: Request) => {
+  try {
+    return helixShouldRenderGraphiQL(await createHelixRequest(request))
+  } catch {
+    return false
+  }
+}
 
 export const getGraphiQLResponse = () => {
   return new Response(helixRenderGraphiQL(), {
