@@ -52,7 +52,7 @@ export default {
     const schema = makeExecutableSchema({
       typeDefs,
       resolvers: {
-        Query: { user: () => 'Hello World 🌍' },
+        Query: { hello: () => 'Hello World 🌍' },
       },
     })
 
