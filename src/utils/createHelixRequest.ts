@@ -3,7 +3,7 @@ export const createHelixRequest = async (request: Request) => {
   const query = Object.fromEntries(new URLSearchParams(url.search))
 
   const body =
-    request.method === 'POST' ? await request.clone().json() : undefined
+    request.method === 'POST' ? await request.json() : undefined
 
   return {
     body,
