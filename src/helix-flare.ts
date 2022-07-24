@@ -16,7 +16,7 @@ type Options<TContext> = SharedOptions & {
 
 export const shouldRenderGraphiQL = async (request: Request) => {
   try {
-    return helixShouldRenderGraphiQL(await createHelixRequest(request))
+    return helixShouldRenderGraphiQL(request)
   } catch {
     return false
   }
