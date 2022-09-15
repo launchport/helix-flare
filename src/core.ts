@@ -35,7 +35,6 @@ const core = async <TContext>({
 }: Options) => {
   const cors = createAccessHeaders(access)
   const { isPreflight, headers } = cors(request)
-
   if (isPreflight) {
     return new Response(null, { status: 204, headers })
   }
@@ -43,7 +42,6 @@ const core = async <TContext>({
   const helixRequest = await createHelixRequest(request)
 
   const { operationName, query, variables } = getGraphQLParameters(helixRequest)
-
   const result = await processRequest({
     operationName,
     query,
@@ -61,6 +59,9 @@ const core = async <TContext>({
       return getResponse(result, headers)
     case 'PUSH':
       // @todo cors headers
+      if (result.context?.___stream_response) {
+        return result.context.___stream_response
+      }
       return getPushResponseSSE(result, request)
     case 'MULTIPART_RESPONSE':
       return getMultipartResponse(result, Response, ReadableStream as any)

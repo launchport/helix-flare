@@ -4,7 +4,6 @@ import {
 } from '@graphql-tools/utils'
 import { print } from 'graphql'
 
-import { fetchEventSource } from './sse/fetchEventSource'
 import getArguments from './utils/getArguments'
 
 export function createExecutor<
@@ -32,39 +31,15 @@ export function createExecutor<
 
     const body = JSON.stringify({ query, variables })
     const headers = Object.fromEntries(request.headers.entries())
-
     if (request.headers.get('accept') === 'text/event-stream') {
-      return observableToAsyncIterable({
-        subscribe: ({ next, complete, error }) => {
-          fetchEventSource(request.url, {
-            method: 'POST',
-            body,
-            headers,
-            fetch: durableObject.fetch.bind(durableObject),
-
-            onClose: () => complete(),
-            onMessage: (message) => {
-              // ping
-              if (message.data === '' && message.event === '') {
-                return
-              }
-
-              if (message.data) {
-                next(JSON.parse(message.data))
-
-                if (message.event === 'complete') {
-                  complete()
-                }
-              }
-            },
-            onError: (e) => error(e),
-          })
-
-          return {
-            unsubscribe: () => undefined,
-          }
-        },
-      })
+      // redirect stream from DO directly to client without parsing to keep stream connection client <-> DO
+      // @ts-ignore
+      context.___stream_response = await durableObject.fetch(request.url, {
+        method: 'POST',
+        body,
+        headers,
+      });
+      return {} as any;
     } else {
       try {
         const response = await durableObject.fetch(request.url, {

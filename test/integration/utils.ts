@@ -14,9 +14,10 @@ export const buildWorkers = () => {
   buildSync({
     entryPoints,
     bundle: true,
-    logLevel: 'error',
+    logLevel: 'info',
     target: 'node16',
     platform: 'node',
+    allowOverwrite: true,
     outdir: path.resolve(__dirname, 'dist'),
     sourcemap: true,
     format: 'esm',

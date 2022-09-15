@@ -62,7 +62,9 @@ export default {
     if (url.pathname !== '/graphql') {
       return new Response('Not found', { status: 404 })
     }
-
+    if (request.method === "OPTIONS") {
+      return new Response('OK', {status: 200})
+    }
     const schema = wrapSchema({
       schema: makeExecutableSchema({ typeDefs }),
       executor: createExecutor<{ articleId?: string }>(

@@ -1,5 +1,6 @@
 import { buildWorkers, createWorker } from './utils'
 import { createClient } from 'graphql-sse'
+import fetch from 'node-fetch';
 
 beforeAll(() => {
   buildWorkers()
@@ -13,10 +14,11 @@ describe('SSE', () => {
       },
       globalTimers: true,
     })
+    await worker.startServer()
 
     const sseClient = createClient({
       url: 'http://localhost:8787/graphql',
-      fetchFn: worker.dispatchFetch.bind(worker),
+      fetchFn: fetch,
     })
 
     const subscriptionPromise = new Promise<void>(async (resolve, reject) => {
@@ -35,13 +37,16 @@ describe('SSE', () => {
               unsub()
             }
           },
-          error: (error) => reject(error),
-          complete: () => {},
+          error: (error) => {
+            return reject(error)
+          },
+          complete: () => {
+          },
         },
       )
 
-      setTimeout(() => {
-        worker.dispatchFetch('http://localhost:8787/graphql', {
+      setTimeout(async () => {
+        const res = await worker.dispatchFetch('http://localhost:8787/graphql', {
           method: 'POST',
           body: JSON.stringify({
             query: /* GraphQL */ `
@@ -51,7 +56,7 @@ describe('SSE', () => {
             `,
           }),
         })
-      }, 100)
+      }, 500)
     })
 
     await expect(subscriptionPromise).resolves.toBeUndefined()
@@ -63,15 +68,18 @@ describe('SSE', () => {
         NEWS_ARTICLE_OBJECT: 'NewsArticleObject',
       },
       globalTimers: true,
+      port: 8788,
     })
+
+    await worker.startServer()
 
     const expectedUpvotes = 5
 
     const clients = Array.from({ length: 2 }, () => {
       return new Promise<number>((resolve, reject) => {
         const sseClient = createClient({
-          url: 'http://localhost:8787/graphql',
-          fetchFn: worker.dispatchFetch.bind(worker),
+          url: 'http://localhost:8788/graphql',
+          fetchFn: fetch,
         })
         let i = 0
         const unsub = sseClient.subscribe<Record<string, 'upvotes'>>(
@@ -95,7 +103,8 @@ describe('SSE', () => {
         )
       })
     })
-
+    let sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+    await sleep(500)
     Array.from({ length: expectedUpvotes - 1 }).forEach(() => {
       worker.dispatchFetch('http://localhost:8787/graphql', {
         method: 'POST',
